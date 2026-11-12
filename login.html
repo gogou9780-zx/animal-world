@@ -108,8 +108,14 @@
         });
         const result = await res.json();
         if (result.ok) {
-          window.Member.set({ name: result.name, memberId: result.memberId });
-          location.href = "member.html";
+          if (result.mustChange) {
+            // ต้องเปลี่ยนรหัสผ่านก่อน (เก็บอีเมลไว้ชั่วคราวเพื่อใช้ในหน้าเปลี่ยนรหัส)
+            window.Member.set({ name: result.name, memberId: result.memberId, mustChange: true, email: email });
+            location.href = "change-password.html";
+          } else {
+            window.Member.set({ name: result.name, memberId: result.memberId });
+            location.href = "member.html";
+          }
         } else {
           banner.textContent = result.error || "เข้าสู่ระบบไม่สำเร็จ";
           banner.className = "banner show";
