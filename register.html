@@ -130,12 +130,10 @@
     </div>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
   <script src="member.js"></script>
   <script>
-    // ==== ใส่ URL ของ Web App จาก Google Apps Script ตรงนี้ ====
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTkMMSRRMcPUaZ9afxPj98Mggxg3Wu54FMesUSKtZJaXxhUJtNDt-jWKCiMwN8yFj4mw/exec";
-    // ==========================================================
-
     // รูปสำรองกรณีรูปถ่ายโหลดไม่ได้
     document.querySelectorAll("img[data-fallback]").forEach(function (img) {
       function useFallback() {
@@ -201,37 +199,73 @@
       if (firstBad) { document.getElementById(firstBad[0]).focus(); return; }
       if (!consentOk) { document.getElementById("consent").focus(); return; }
 
-      if (SCRIPT_URL.startsWith("PASTE_")) {
-        banner.textContent = "ยังไม่ได้ตั้งค่า SCRIPT_URL ในไฟล์ register.html";
+      if (!window.SUPABASE_READY || !window.sb) {
+        banner.textContent = "ยังไม่ได้ตั้งค่า SUPABASE_URL และ SUPABASE_ANON_KEY ในไฟล์ supabase-config.js";
         banner.className = "banner show";
         return;
       }
 
       const data = Object.fromEntries(new FormData(form).entries());
-      data.name = data.name.trim();
-      data.email = data.email.trim();
-      data.phone = data.phone.replace(/[\s-]/g, "");
-      delete data.password2;
-      data.action = "register";
+      // ช่องดักบอท: ถ้ามีค่า แสดงว่าไม่ใช่คนจริง ไม่ต้องส่งข้อมูล
+      if (data.website) return;
+
+      const name = data.name.trim();
+      const email = data.email.trim().toLowerCase();
+      const phone = data.phone.replace(/[\s-]/g, "");
 
       btn.disabled = true;
       btn.textContent = "กำลังส่งข้อมูล...";
       try {
-        const res = await fetch(SCRIPT_URL, {
-          method: "POST",
-          body: new URLSearchParams(data)
+        const { data: signUp, error } = await window.sb.auth.signUp({
+          email: email,
+          password: data.password,
+          options: {
+            data: {
+              name: name,
+              phone: phone,
+              birthdate: data.birthdate || "",
+              source: data.source || "",
+              consent: data.consent || ""
+            }
+          }
         });
-        const result = await res.json();
-        if (result.ok) {
-          window.Member.set({ name: data.name, memberId: result.memberId }); // สมัครแล้วเข้าสู่ระบบให้ทันที
-          form.hidden = true;
-          document.getElementById("member-id").textContent = result.memberId;
-          done.hidden = false;
-          done.scrollIntoView({ block: "center" });
-        } else {
-          banner.textContent = result.error || "ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่อีกครั้ง";
+
+        if (error) {
+          // ถ้าเบอร์โทรซ้ำ trigger ในฐานข้อมูลจะทำให้การสมัครล้มเหลวด้วยข้อความทั่วไปนี้
+          const dup = /database error|already registered|already been registered/i.test(error.message);
+          banner.textContent = dup ? "อีเมลหรือเบอร์โทรนี้เป็นสมาชิกอยู่แล้ว ลองเข้าสู่ระบบแทน"
+                                   : "ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่อีกครั้ง";
           banner.className = "banner show";
+          return;
         }
+
+        // เมื่อเปิดยืนยันอีเมลไว้ และอีเมลนี้มีอยู่แล้ว Supabase จะตอบกลับโดยไม่มี identities
+        if (signUp.user && signUp.user.identities && signUp.user.identities.length === 0) {
+          banner.textContent = "อีเมลหรือเบอร์โทรนี้เป็นสมาชิกอยู่แล้ว ลองเข้าสู่ระบบแทน";
+          banner.className = "banner show";
+          return;
+        }
+
+        if (!signUp.session) {
+          // เปิด "Confirm email" ไว้ใน Supabase: ต้องกดลิงก์ในอีเมลก่อนจึงเข้าสู่ระบบได้
+          banner.textContent = "สมัครแล้ว กรุณาเปิดอีเมลเพื่อกดลิงก์ยืนยัน จากนั้นเข้าสู่ระบบ";
+          banner.className = "banner show";
+          return;
+        }
+
+        const { data: row, error: rowErr } = await window.sb
+          .from("members").select("member_id, name").eq("id", signUp.user.id).single();
+        if (rowErr || !row) {
+          banner.textContent = "สมัครแล้ว แต่ดึงรหัสสมาชิกไม่สำเร็จ ลองเข้าสู่ระบบอีกครั้ง";
+          banner.className = "banner show";
+          return;
+        }
+
+        window.Member.set({ name: row.name, memberId: row.member_id }); // สมัครแล้วเข้าสู่ระบบให้ทันที
+        form.hidden = true;
+        document.getElementById("member-id").textContent = row.member_id;
+        done.hidden = false;
+        done.scrollIntoView({ block: "center" });
       } catch (err) {
         banner.textContent = "เชื่อมต่อไม่ได้ ตรวจสอบอินเทอร์เน็ตแล้วลองใหม่อีกครั้ง";
         banner.className = "banner show";
