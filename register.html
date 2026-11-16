@@ -232,9 +232,10 @@
 
         if (error) {
           // ถ้าเบอร์โทรซ้ำ trigger ในฐานข้อมูลจะทำให้การสมัครล้มเหลวด้วยข้อความทั่วไปนี้
+          console.error("signUp error:", error);
           const dup = /database error|already registered|already been registered/i.test(error.message);
           banner.textContent = dup ? "อีเมลหรือเบอร์โทรนี้เป็นสมาชิกอยู่แล้ว ลองเข้าสู่ระบบแทน"
-                                   : "ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่อีกครั้ง";
+                                   : "ส่งข้อมูลไม่สำเร็จ (" + error.message + ")";
           banner.className = "banner show";
           return;
         }
