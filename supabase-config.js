@@ -4,7 +4,7 @@
 //   SUPABASE_ANON_KEY = anon / publishable key (ใส่ในหน้าเว็บได้ ปลอดภัยเพราะมี RLS คุมอยู่)
 // ห้ามใส่ service_role key ในไฟล์นี้เด็ดขาด
 (function () {
-  var SUPABASE_URL = "https://supabase.com/dashboard/project/zpmrbsetvaocnqguxsej/settings/general";
+  var SUPABASE_URL = "https://zpmrbsetvaocnqguxsej.supabase.co";
   var SUPABASE_ANON_KEY = "sb_publishable_xnl-sCFvzfNWr4TSkRlRJw_6Nfj4mJr";
 
   window.SUPABASE_READY = !SUPABASE_URL.startsWith("PASTE_") && !SUPABASE_ANON_KEY.startsWith("PASTE_");
