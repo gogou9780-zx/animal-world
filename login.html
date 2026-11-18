@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@600;700&family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="motion.css">
 </head>
 <body>
   <a class="skip" href="#form">ข้ามไปแบบฟอร์ม</a>
@@ -64,10 +65,10 @@
     <div class="wrap"><p class="copy">© 2026 โลกสัตว์น่ารู้ สงวนลิขสิทธิ์</p></div>
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-config.js"></script>
   <script src="member.js"></script>
   <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTkMMSRRMcPUaZ9afxPj98Mggxg3Wu54FMesUSKtZJaXxhUJtNDt-jWKCiMwN8yFj4mw/exec";
+
     document.querySelectorAll("img[data-fallback]").forEach(function (img) {
       function useFallback() { if (img.dataset.used) return; img.dataset.used = "1"; img.src = img.dataset.fallback; }
       img.addEventListener("error", useFallback);
@@ -99,40 +100,26 @@
       if (emailBad) { document.getElementById("email").focus(); return; }
       if (passBad) { document.getElementById("password").focus(); return; }
 
-      if (!window.SUPABASE_READY || !window.sb) {
-        banner.textContent = "ยังไม่ได้ตั้งค่า SUPABASE_URL และ SUPABASE_ANON_KEY ในไฟล์ supabase-config.js";
-        banner.className = "banner show";
-        return;
-      }
-
       btn.disabled = true;
       btn.textContent = "กำลังตรวจสอบ...";
       try {
-        const { data, error } = await window.sb.auth.signInWithPassword({ email: email.toLowerCase(), password: password });
-        if (error) {
-          banner.textContent = /confirm/i.test(error.message)
-            ? "ยังไม่ได้ยืนยันอีเมล กรุณากดลิงก์ในอีเมลที่ส่งให้ตอนสมัคร"
-            : "อีเมลหรือรหัสผ่านไม่ถูกต้อง";
-          banner.className = "banner show";
-          return;
-        }
-
-        const { data: row, error: rowErr } = await window.sb
-          .from("members").select("member_id, name, must_change_password").eq("id", data.user.id).single();
-        if (rowErr || !row) {
-          await window.sb.auth.signOut();
-          banner.textContent = "ไม่พบข้อมูลสมาชิกของบัญชีนี้";
-          banner.className = "banner show";
-          return;
-        }
-
-        if (row.must_change_password) {
-          // ต้องเปลี่ยนรหัสผ่านก่อนใช้งานต่อ (ไม่ต้องเก็บอีเมลในเบราว์เซอร์ เพราะมี session อยู่แล้ว)
-          window.Member.set({ name: row.name, memberId: row.member_id, mustChange: true });
-          location.href = "change-password.html";
+        const res = await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: new URLSearchParams({ action: "login", email: email, password: password })
+        });
+        const result = await res.json();
+        if (result.ok) {
+          if (result.mustChange) {
+            // ต้องเปลี่ยนรหัสผ่านก่อน (เก็บอีเมลไว้ชั่วคราวเพื่อใช้ในหน้าเปลี่ยนรหัส)
+            window.Member.set({ name: result.name, memberId: result.memberId, mustChange: true, email: email });
+            location.href = "change-password.html";
+          } else {
+            window.Member.set({ name: result.name, memberId: result.memberId });
+            location.href = "member.html";
+          }
         } else {
-          window.Member.set({ name: row.name, memberId: row.member_id });
-          location.href = "member.html";
+          banner.textContent = result.error || "เข้าสู่ระบบไม่สำเร็จ";
+          banner.className = "banner show";
         }
       } catch (err) {
         banner.textContent = "เชื่อมต่อไม่ได้ ตรวจสอบอินเทอร์เน็ตแล้วลองใหม่อีกครั้ง";
@@ -143,5 +130,6 @@
       }
     });
   </script>
+  <script src="motion.js"></script>
 </body>
 </html>

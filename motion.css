@@ -1,0 +1,210 @@
+/* โลกสัตว์น่ารู้ — ชั้นแอนิเมชันและความสวยงามเพิ่มเติม
+   โหลดต่อจาก style.css ถ้าไม่ต้องการแอนิเมชัน ให้ลบลิงก์ motion.css และ motion.js ออกจากหน้า HTML ได้เลย
+   ผู้ใช้ที่เปิด "ลดการเคลื่อนไหว" ในระบบ จะไม่เห็นแอนิเมชัน (ดูท้ายไฟล์) */
+
+:root { --ease: cubic-bezier(.22, 1, .36, 1); }
+
+/* ---------- ทั่วไป ---------- */
+body { animation: pageIn .6s ease-out both; }
+@keyframes pageIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes rise { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+@keyframes wiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-10deg) scale(1.08); } 75% { transform: rotate(10deg) scale(1.08); } }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-7px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(3px); } }
+@keyframes drift { to { transform: translate(60px, 40px) scale(1.15); } }
+@keyframes gradMove { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+@keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+/* แถบความคืบหน้าการเลื่อนหน้า */
+.scroll-progress {
+  position: fixed; top: 0; left: 0; width: 100%; height: 4px; z-index: 40;
+  transform-origin: 0 50%; transform: scaleX(0); pointer-events: none;
+  background: linear-gradient(90deg, var(--moss), var(--sun));
+}
+
+/* ปรากฏเมื่อเลื่อนมาถึง (JS เป็นคนเติมคลาส will-reveal และ in) */
+.will-reveal {
+  opacity: 0; transform: translateY(32px);
+  transition: opacity .7s var(--ease) var(--d, 0s), transform .7s var(--ease) var(--d, 0s);
+}
+.will-reveal.in { opacity: 1; transform: none; }
+
+/* ---------- ส่วนหัว ---------- */
+.site-header { transition: box-shadow .3s, background-color .3s; }
+.site-header .wrap { transition: min-height .3s var(--ease); }
+.site-header.scrolled { box-shadow: 0 10px 26px -14px rgba(22, 38, 29, .35); background: rgba(245, 248, 243, .98); }
+.site-header.scrolled .wrap { min-height: 58px; }
+.brand:hover .brand-mark { animation: wiggle .6s; }
+.nav a { transition: background-color .2s, color .2s, transform .25s var(--ease), box-shadow .25s; }
+.nav a:hover { transform: translateY(-2px); }
+.nav a.nav-cta:hover { box-shadow: 0 8px 18px -8px rgba(31, 77, 58, .7); }
+
+/* ---------- ปุ่ม ---------- */
+.btn {
+  position: relative; overflow: hidden;
+  transition: background-color .15s, color .15s, border-color .15s, transform .25s var(--ease), box-shadow .25s;
+}
+.btn:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 12px 22px -12px rgba(22, 38, 29, .55); }
+.btn:active:not(:disabled) { transform: translateY(0) scale(.97); box-shadow: none; }
+.btn::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, .45) 50%, transparent 70%);
+  transform: translateX(-120%);
+}
+.btn:hover:not(:disabled)::after { transform: translateX(120%); transition: transform .7s var(--ease); }
+.ripple {
+  position: absolute; border-radius: 50%; pointer-events: none;
+  background: rgba(255, 255, 255, .5); transform: scale(0);
+  animation: ripple .6s ease-out forwards;
+}
+.btn-line .ripple { background: rgba(45, 106, 79, .25); }
+@keyframes ripple { to { transform: scale(2.6); opacity: 0; } }
+
+/* ---------- หน้าแรก: ส่วนเปิด ---------- */
+.hero { position: relative; overflow: hidden; }
+.hero::before, .hero::after {
+  content: ""; position: absolute; border-radius: 50%; filter: blur(60px);
+  opacity: .55; z-index: 0; pointer-events: none;
+}
+.hero::before { width: 420px; height: 420px; background: #cfe6d2; left: -120px; top: -100px; animation: drift 16s ease-in-out infinite alternate; }
+.hero::after { width: 360px; height: 360px; background: #ffe9a8; right: -80px; bottom: -60px; animation: drift 20s ease-in-out infinite alternate-reverse; }
+.hero .wrap { position: relative; z-index: 1; }
+
+.hero h1, .hero .lead, .hero-actions { animation: rise .8s var(--ease) both; }
+.hero .lead { animation-delay: .12s; }
+.hero-actions { animation-delay: .24s; }
+
+/* ภาพในส่วนเปิด: ลอยเบา ๆ และขยับตามเมาส์ (translate แยกจาก transform) */
+@keyframes float { 50% { transform: translateY(-12px); } }
+@keyframes sunPulse { 50% { transform: scale(1.1); box-shadow: 0 0 0 18px rgba(255, 201, 74, .25); } }
+.art .p-main  { --depth: 10;  animation: reveal .8s ease-out both, float 7s ease-in-out 1s infinite; }
+.art .p-round { --depth: -18; animation: reveal .8s ease-out .15s both, float 6s ease-in-out 1.2s infinite reverse; }
+.art .p-small { --depth: 22;  animation: reveal .8s ease-out .3s both, float 8s ease-in-out 1.4s infinite; }
+.art .sun     { --depth: -26; animation: reveal .8s ease-out both, sunPulse 5s ease-in-out 1s infinite; }
+.art figure, .art .sun {
+  translate: calc(var(--mx, 0) * var(--depth, 0) * 1px) calc(var(--my, 0) * var(--depth, 0) * 1px);
+  transition: translate .5s ease-out;
+}
+.art figure { box-shadow: 0 24px 40px -26px rgba(22, 38, 29, .55); }
+
+/* ---------- การ์ดสัตว์ ---------- */
+.animal figure {
+  position: relative;
+  background: linear-gradient(100deg, var(--leaf) 30%, #eef6ee 50%, var(--leaf) 70%);
+  background-size: 200% 100%; animation: shimmer 1.6s linear infinite;
+  transition: transform .25s ease-out, translate .5s var(--ease), box-shadow .5s var(--ease);
+  will-change: transform;
+}
+.animal figure.is-loaded { animation: none; background: var(--leaf); }
+.animal:hover figure { translate: 0 -8px; box-shadow: 0 26px 34px -22px rgba(22, 38, 29, .55); }
+.animal img { transition: transform .9s var(--ease), opacity .6s ease; }
+.animal:hover img { transform: scale(1.08); }
+.animal h3 { transition: color .2s; }
+.animal:hover h3 { color: var(--moss); }
+.animal.pop { animation: cardPop .5s var(--ease) backwards; animation-delay: var(--pd, 0s); }
+@keyframes cardPop { from { opacity: 0; transform: translateY(18px) scale(.96); } }
+
+.img-fade { opacity: 0; }
+.img-fade.loaded { opacity: 1; }
+
+/* ---------- หน้าสัตว์น่ารู้: ค้นหาและกรอง ---------- */
+.chip { transition: background-color .15s, color .15s, transform .2s var(--ease), box-shadow .2s; }
+.chip:hover { transform: translateY(-2px); box-shadow: 0 8px 14px -10px rgba(22, 38, 29, .5); }
+.chip:active { transform: scale(.95); }
+.chip[aria-pressed="true"] { animation: chipPop .4s var(--ease); }
+@keyframes chipPop { 40% { transform: scale(1.1); } }
+.search input { transition: border-color .2s, box-shadow .2s, max-width .4s var(--ease); }
+.search input:focus { max-width: 540px; box-shadow: 0 10px 22px -14px rgba(45, 106, 79, .6); }
+
+/* ---------- รู้หรือไม่ ---------- */
+.fact-panel {
+  position: relative; overflow: hidden;
+  background: linear-gradient(120deg, #ffc94a, #ffdc82, #ffc94a); background-size: 200% 200%;
+  animation: gradMove 10s ease-in-out infinite;
+}
+.fact-panel::before {
+  content: ""; position: absolute; right: -60px; top: -70px; width: 240px; height: 240px;
+  border-radius: 50%; background: rgba(255, 255, 255, .3); pointer-events: none;
+  animation: drift 12s ease-in-out infinite alternate;
+}
+.fact-panel > * { position: relative; }
+.fact-text.swap { animation: rise .5s var(--ease); }
+.daily .text { animation: rise .7s var(--ease) both; }
+
+/* ---------- ชวนสมัคร ---------- */
+.join {
+  position: relative; overflow: hidden;
+  background: linear-gradient(120deg, var(--moss-deep), #2b6a50, var(--moss-deep)); background-size: 200% 100%;
+  animation: gradMove 14s ease-in-out infinite;
+}
+.join::after {
+  content: ""; position: absolute; right: 6%; top: -60px; width: 200px; height: 200px; border-radius: 50%;
+  background: rgba(255, 201, 74, .18); pointer-events: none; animation: drift 14s ease-in-out infinite alternate;
+}
+.join .wrap { position: relative; z-index: 1; }
+
+/* ---------- ฟอร์ม (สมัคร / เข้าสู่ระบบ / เปลี่ยนรหัส) ---------- */
+.form-card { transition: box-shadow .4s var(--ease); }
+.form-card:hover { box-shadow: 0 30px 50px -34px rgba(22, 38, 29, .45); }
+.field label { transition: color .2s; }
+.field:focus-within label { color: var(--moss); }
+.field input, .field select { transition: border-color .2s, box-shadow .2s, transform .2s var(--ease); }
+.field input:focus, .field select:focus { transform: translateY(-1px); box-shadow: 0 10px 20px -14px rgba(45, 106, 79, .7); }
+.field input[aria-invalid="true"] { animation: shake .4s; }
+.banner.show { animation: rise .35s var(--ease); }
+.consent { cursor: pointer; }
+
+.done .badge { animation: badgePop .8s cubic-bezier(.34, 1.56, .64, 1) both; }
+.done > *:not(.badge) { animation: rise .6s var(--ease) both; }
+.done > h2 { animation-delay: .15s; }
+.done > p:nth-of-type(1) { animation-delay: .22s; }
+.done > .member-id { animation-delay: .3s; }
+.done > p:nth-of-type(3) { animation-delay: .38s; }
+.done > .btn { animation-delay: .46s; }
+@keyframes badgePop { from { opacity: 0; transform: scale(.3) rotate(-20deg); } to { opacity: 1; transform: none; } }
+
+.perks li::before { animation: sunPulse 4s ease-in-out infinite; }
+
+/* ---------- เมนูสมาชิก ---------- */
+.member-head h1, #guest h1 { animation: rise .7s var(--ease) both; }
+.member-head .member-id { animation: badgePop .8s cubic-bezier(.34, 1.56, .64, 1) .2s both; }
+.menu-item a { transition: padding-left .35s var(--ease), background .35s; border-radius: 0 16px 16px 0; }
+.menu-item a:hover { padding-left: 14px; background: linear-gradient(90deg, var(--leaf), transparent); }
+.menu-item a:hover .menu-dot { animation: wiggle .6s; }
+.daily { position: relative; overflow: hidden; }
+.daily::after {
+  content: ""; position: absolute; right: -40px; bottom: -50px; width: 180px; height: 180px; border-radius: 50%;
+  background: rgba(255, 201, 74, .35); pointer-events: none;
+}
+.daily > * { position: relative; z-index: 1; }
+
+/* ---------- แบบทดสอบ ---------- */
+.q-bar { height: 8px; margin: 8px 0 6px; background: var(--leaf); border-radius: 999px; overflow: hidden; }
+.q-bar span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--moss), var(--sun)); transition: width .7s var(--ease); }
+#quiz-box > p { animation: rise .5s var(--ease) both; }
+.q-text { animation: rise .5s var(--ease) .05s both; }
+.q-option { animation: rise .5s var(--ease) both; }
+.q-option:nth-child(1) { animation-delay: .1s; }
+.q-option:nth-child(2) { animation-delay: .17s; }
+.q-option:nth-child(3) { animation-delay: .24s; }
+.q-option:nth-child(4) { animation-delay: .31s; }
+.q-actions { animation: rise .5s var(--ease) .38s both; }
+.q-option label { transition: transform .25s var(--ease), border-color .2s, background-color .2s, box-shadow .25s; }
+.q-option label:hover { transform: translateX(6px); border-color: var(--moss); box-shadow: 0 10px 18px -14px rgba(22, 38, 29, .6); }
+.q-option:has(input:checked) label { border-color: var(--moss-deep); background: var(--leaf); }
+.q-option.correct label { animation: correctPop .55s var(--ease); }
+.q-option.wrong label { animation: shake .45s; }
+@keyframes correctPop { 40% { transform: scale(1.04); box-shadow: 0 0 0 6px rgba(31, 111, 67, .2); } }
+.score { animation: badgePop .9s cubic-bezier(.34, 1.56, .64, 1) both; }
+
+/* ---------- confetti ---------- */
+.confetti { position: fixed; width: 8px; height: 12px; border-radius: 2px; z-index: 60; pointer-events: none; }
+
+/* ---------- ลดการเคลื่อนไหวตามการตั้งค่าของระบบ ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important; animation-iteration-count: 1 !important;
+    animation-delay: 0s !important; transition-duration: .01ms !important; transition-delay: 0s !important;
+  }
+  .will-reveal { opacity: 1; transform: none; }
+  .img-fade { opacity: 1; }
+}

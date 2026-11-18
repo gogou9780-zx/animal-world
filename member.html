@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@600;700&family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="motion.css">
 </head>
 <body>
   <a class="skip" href="#main">ข้ามไปเนื้อหา</a>
@@ -100,15 +101,15 @@
     </div>
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-config.js"></script>
   <script src="member.js"></script>
   <script>
     var m = window.Member.get();
     var guest = document.getElementById("guest");
     var home = document.getElementById("home");
 
-    function showMember() {
+    if (!m) {
+      guest.hidden = false;
+    } else {
       home.hidden = false;
       // ใช้ textContent เพื่อไม่ให้ชื่อที่กรอกถูกตีความเป็นโค้ด HTML
       document.getElementById("who").textContent = m.name;
@@ -125,24 +126,12 @@
       var day = Math.floor(Date.now() / 86400000);
       document.getElementById("daily-text").textContent = facts[day % facts.length];
 
-      document.getElementById("leave").addEventListener("click", async function () {
-        try { if (window.sb) await window.sb.auth.signOut(); } catch (e) {}
+      document.getElementById("leave").addEventListener("click", function () {
         window.Member.clear();
         location.href = "index.html";
       });
     }
-
-    // ตรวจ session จริงของ Supabase: ถ้าหมดอายุหรือไม่มี ให้ล้างข้อมูลที่จำไว้และแสดงหน้าให้เข้าสู่ระบบ
-    (async function () {
-      if (!m || !window.SUPABASE_READY || !window.sb) { guest.hidden = false; return; }
-      var res = await window.sb.auth.getSession();
-      if (!res.data.session) {
-        window.Member.clear();
-        guest.hidden = false;
-        return;
-      }
-      showMember();
-    })();
   </script>
+  <script src="motion.js"></script>
 </body>
 </html>
