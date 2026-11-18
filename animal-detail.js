@@ -1,5 +1,5 @@
 // คลิกการ์ดสัตว์ (ภาพ/ชื่อ) เพื่อเปิดหน้าต่างดูข้อมูลสัตว์ ใช้ได้ทั้ง index.html และ animals.html
-// การ์ดต้องมี class="animal" และ data-file="ชื่อไฟล์บน Wikimedia Commons"
+// การ์ดต้องมี class="animal" และ data-file="ชื่อไฟล์บน Wikimedia Commons" หรือ data-wiki="ชื่อบทความ Wikipedia"
 (function () {
   "use strict";
   var doc = document;
@@ -45,7 +45,7 @@
   var current = null;
 
   function visibleCards() {
-    return Array.prototype.filter.call(doc.querySelectorAll(".animal[data-file]"), function (c) { return !c.hidden; });
+    return Array.prototype.filter.call(doc.querySelectorAll(".animal[data-file], .animal[data-wiki]"), function (c) { return !c.hidden; });
   }
 
   function show(card) {
@@ -57,14 +57,16 @@
 
     img.removeAttribute("data-used");
     img.onerror = function () { if (img.dataset.used) return; img.dataset.used = "1"; img.src = fallback; };
-    img.src = COMMONS + file + "?width=1000";
+    // สัตว์ที่ดึงภาพจาก Wikipedia มี data-img (ภาพใหญ่) ให้ใช้ก่อน ถ้ายังไม่ได้ภาพให้ใช้ภาพบนการ์ด
+    img.src = card.dataset.img || (file ? COMMONS + file + "?width=1000" : (cardImg && cardImg.getAttribute("src")) || fallback);
     img.alt = "ภาพถ่าย" + name;
 
     dlg.querySelector(".ad-kind").textContent = (card.querySelector(".kind") || {}).textContent || "";
     dlg.querySelector("h2").textContent = name;
     dlg.querySelector(".ad-fact").textContent = (card.querySelector("p:not(.kind)") || {}).textContent || "";
     dlg.querySelector(".ad-wiki").href = "https://th.wikipedia.org/wiki/Special:Search?search=" + encodeURIComponent(name);
-    dlg.querySelector(".ad-credit").href = "https://commons.wikimedia.org/wiki/File:" + file;
+    dlg.querySelector(".ad-credit").href = file ? "https://commons.wikimedia.org/wiki/File:" + file
+      : "https://en.wikipedia.org/wiki/" + (card.dataset.wiki || "").replace(/ /g, "_");
 
     var many = visibleCards().length > 1;
     dlg.querySelector(".ad-nav").hidden = !many;
@@ -89,13 +91,13 @@
 
   // คลิกที่การ์ดใดก็ได้ (ใช้ delegation เพราะหน้าสัตว์น่ารู้สร้างการ์ดด้วย JS)
   doc.addEventListener("click", function (e) {
-    var a = e.target.closest && e.target.closest(".animal[data-file]");
+    var a = e.target.closest && e.target.closest(".animal[data-file], .animal[data-wiki]");
     if (a) show(a);
   });
 
   // ให้ผู้ใช้คีย์บอร์ดเปิดได้ด้วย Tab + Enter/Space
   function prep() {
-    doc.querySelectorAll(".animal[data-file] figure").forEach(function (f) {
+    doc.querySelectorAll(".animal[data-file] figure, .animal[data-wiki] figure").forEach(function (f) {
       if (f.dataset.ad) return;
       f.dataset.ad = "1";
       var name = f.parentNode.querySelector("h3").textContent;

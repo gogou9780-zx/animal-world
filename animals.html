@@ -33,7 +33,7 @@
       <!-- ผู้ที่ยังไม่ได้เข้าสู่ระบบ -->
       <section id="guest" hidden>
         <h1>สัตว์น่ารู้สำหรับสมาชิก</h1>
-        <p class="notice">กรุณาเข้าสู่ระบบ หรือสมัครสมาชิกฟรี แล้วดูสัตว์ทั้ง 20 ชนิดได้ทันที</p>
+        <p class="notice">กรุณาเข้าสู่ระบบ หรือสมัครสมาชิกฟรี แล้วดูสัตว์ทั้ง 40 ชนิดได้ทันที</p>
         <a class="btn btn-sun" href="login.html">เข้าสู่ระบบ</a>
         <a class="btn btn-line" href="register.html">สมัครสมาชิกฟรี</a>
       </section>
@@ -41,7 +41,7 @@
       <div id="content">
       <div class="section-head">
         <h1 class="page-title">สัตว์น่ารู้</h1>
-        <p>สัตว์ 20 ชนิดจาก 6 กลุ่ม พิมพ์ชื่อเพื่อค้นหา เลือกกลุ่มที่สนใจ หรือคลิกที่สัตว์เพื่อดูข้อมูล</p>
+        <p>สัตว์ <span id="total">40</span> ชนิดจาก 6 กลุ่ม พิมพ์ชื่อเพื่อค้นหา เลือกกลุ่มที่สนใจ หรือคลิกที่สัตว์เพื่อดูข้อมูล</p>
       </div>
 
       <div class="toolbar">
@@ -138,8 +138,60 @@
       { name: "ผีเสื้อมอนาร์ค", group: "invertebrate", file: "Monarch_Butterfly_Danaus_plexippus_on_Echinacea_purpurea_2800px.jpg",
         fact: "บินอพยพไกลหลายพันกิโลเมตรในอเมริกาเหนือ เพื่อหนีอากาศหนาว" },
       { name: "หมึกสาย", group: "invertebrate", file: "Common_octopus.jpg",
-        fact: "มีหัวใจ 3 ดวง และเลือดเป็นสีฟ้า (ในภาษาพูดมักเรียกว่าปลาหมึกยักษ์)" }
+        fact: "มีหัวใจ 3 ดวง และเลือดเป็นสีฟ้า (ในภาษาพูดมักเรียกว่าปลาหมึกยักษ์)" },
+
+      // ---- สัตว์ชุดที่เพิ่ม: ใช้ wiki = ชื่อบทความบน en.wikipedia.org แล้วระบบจะดึงภาพหลักของบทความมาให้เอง ----
+      { name: "สิงโต", group: "mammal", wiki: "Lion",
+        fact: "เป็นแมวใหญ่ชนิดเดียวที่อยู่รวมกันเป็นฝูง เรียกว่าไพรด์ โดยส่วนใหญ่ตัวเมียเป็นฝ่ายออกล่าเหยื่อ" },
+      { name: "หมีขั้วโลก", group: "mammal", wiki: "Polar bear",
+        fact: "ใต้ขนสีขาวคือผิวหนังสีดำที่ช่วยดูดซับความร้อน และว่ายน้ำได้เก่งมาก" },
+      { name: "ม้าลาย", group: "mammal", wiki: "Plains zebra",
+        fact: "ลายของม้าลายแต่ละตัวไม่เหมือนกัน และลูกม้าลายลุกขึ้นยืนได้ไม่นานหลังคลอด" },
+      { name: "เสือชีตาห์", group: "mammal", wiki: "Cheetah",
+        fact: "เป็นสัตว์บกที่วิ่งเร็วที่สุดในโลก ทำความเร็วได้ราว 100 กิโลเมตรต่อชั่วโมงในระยะสั้น ๆ" },
+      { name: "โคอาลา", group: "mammal", wiki: "Koala",
+        fact: "ไม่ใช่หมี แต่เป็นสัตว์มีกระเป๋าหน้าท้อง กินใบยูคาลิปตัสเป็นหลัก และพบในประเทศออสเตรเลีย" },
+      { name: "อุรังอุตัง", group: "mammal", wiki: "Orangutan",
+        fact: "ชื่อในภาษามลายูแปลว่า คนแห่งป่า พบตามธรรมชาติบนเกาะบอร์เนียวและเกาะสุมาตราเท่านั้น" },
+      { name: "ชะนีมือขาว", group: "mammal", wiki: "Lar gibbon",
+        fact: "พบในป่าของไทย ใช้แขนยาว ๆ โหนไปตามต้นไม้ และส่งเสียงร้องดังก้องไปทั้งป่า" },
+      { name: "ฮิปโปโปเตมัส", group: "mammal", wiki: "Hippopotamus",
+        fact: "ใช้เวลาส่วนใหญ่ของวันแช่ตัวในน้ำ แล้วขึ้นมากินหญ้าตอนกลางคืน" },
+
+      { name: "นกอินทรีหัวขาว", group: "bird", wiki: "Bald eagle",
+        fact: "เป็นนกประจำชาติของสหรัฐอเมริกา ตัวเต็มวัยมีหัวและหางสีขาว และสร้างรังขนาดใหญ่มากไว้ใช้ซ้ำหลายปี" },
+      { name: "นกกระเต็นธรรมดา", group: "bird", wiki: "Common kingfisher",
+        fact: "เกาะรอบนิ่ง ๆ ริมน้ำ แล้วพุ่งลงไปจับปลาด้วยจะงอยปากแหลม" },
+      { name: "นกทูแคนโตโก", group: "bird", wiki: "Toco toucan",
+        fact: "จะงอยปากใหญ่สีส้มสด แต่เบามากเพราะข้างในโปร่ง และช่วยระบายความร้อนออกจากตัวได้ด้วย" },
+      { name: "นกกระจอกเทศ", group: "bird", wiki: "Common ostrich",
+        fact: "เป็นนกที่ใหญ่ที่สุดในโลก บินไม่ได้ แต่วิ่งได้เร็วราว 70 กิโลเมตรต่อชั่วโมง" },
+
+      { name: "มังกรโคโมโด", group: "reptile", wiki: "Komodo dragon",
+        fact: "เป็นกิ้งก่าที่ใหญ่ที่สุดในโลก พบตามธรรมชาติบนเกาะบางแห่งของประเทศอินโดนีเซีย" },
+      { name: "พญางูเห่า", group: "reptile", wiki: "King cobra",
+        fact: "เป็นงูพิษที่ยาวที่สุดในโลก กินงูชนิดอื่นเป็นอาหารหลัก และพบในประเทศไทยด้วย" },
+
+      { name: "แอกซอลอเติล", group: "amphibian", wiki: "Axolotl",
+        fact: "เป็นซาลาแมนเดอร์ที่มีเหงือกนอกตลอดชีวิต และงอกอวัยวะบางส่วน เช่น ขา กลับมาใหม่ได้" },
+      { name: "กบพิษลูกดอก", group: "amphibian", wiki: "Poison dart frog",
+        fact: "สีสดใสเป็นสัญญาณเตือนศัตรูว่ามีพิษ ซึ่งพิษมาจากอาหารที่มันกินในธรรมชาติ" },
+
+      { name: "ปลากัด", group: "fish", wiki: "Siamese fighting fish",
+        fact: "ตัวผู้ก้าวร้าวและสู้กันเอง ตอนผสมพันธุ์จะพ่นฟองอากาศทำรัง แล้วดูแลไข่เอง เป็นสัตว์น้ำประจำชาติของไทย" },
+      { name: "ฉลามวาฬ", group: "fish", wiki: "Whale shark",
+        fact: "เป็นปลาที่ใหญ่ที่สุดในโลก กินแพลงก์ตอนเป็นอาหาร และไม่เป็นอันตรายต่อคน" },
+
+      { name: "ผึ้ง", group: "invertebrate", wiki: "Western honey bee",
+        fact: "บอกทิศทางและระยะของแหล่งอาหารให้เพื่อนในรังด้วยการเต้นรำ" },
+      { name: "แมงกะพรุน", group: "invertebrate", wiki: "Jellyfish",
+        fact: "ไม่มีสมอง หัวใจ หรือกระดูก ลำตัวส่วนใหญ่เป็นน้ำ" }
     ];
+
+    // เรียงสัตว์ตามกลุ่ม (ลำดับเดียวกับ GROUPS) ไม่ว่าจะเพิ่มไว้ตรงไหนของรายการ
+    var groupOrder = Object.keys(GROUPS);
+    ANIMALS.sort(function (a, b) { return groupOrder.indexOf(a.group) - groupOrder.indexOf(b.group); });
+    document.getElementById("total").textContent = ANIMALS.length;
 
     var state = { group: "all", q: "" };
     var list = document.getElementById("list");
@@ -157,10 +209,13 @@
 
     // การ์ดสัตว์
     list.innerHTML = ANIMALS.map(function (a, n) {
-      var img = '<img ' + (n > 5 ? 'loading="lazy" ' : '') +
-        'src="' + COMMONS + a.file + '?width=700" data-fallback="' + (a.fallback || "assets/placeholder.svg") +
-        '" alt="ภาพถ่าย' + a.name + '" width="500" height="625">';
-      return '<article class="animal" data-file="' + a.file + '" data-group="' + a.group + '" data-search="' + (a.name + " " + GROUPS[a.group]) + '">' +
+      // สัตว์ที่ใช้ file: ใส่รูปทันที / สัตว์ที่ใช้ wiki: ปล่อย src ว่างไว้ก่อน แล้วดึงรูปตอนเลื่อนมาใกล้
+      var src = a.file ? 'src="' + COMMONS + a.file + '?width=700" ' : '';
+      var img = '<img ' + (n > 5 ? 'loading="lazy" ' : '') + src +
+        'data-fallback="' + (a.fallback || "assets/placeholder.svg") +
+        '" alt="' + (a.file ? 'ภาพถ่าย' + a.name : '') + '" width="500" height="625">';
+      var key = a.file ? 'data-file="' + a.file + '"' : 'data-wiki="' + a.wiki + '"';
+      return '<article class="animal" ' + key + ' data-group="' + a.group + '" data-search="' + (a.name + " " + GROUPS[a.group]) + '">' +
         '<figure>' + img + '</figure>' +
         '<h3>' + a.name + '</h3>' +
         '<p class="kind">' + GROUPS[a.group] + '</p>' +
@@ -175,16 +230,44 @@
         img.src = img.dataset.fallback;
       }
       img.addEventListener("error", useFallback);
-      if (img.complete && img.naturalWidth === 0) useFallback();
+      if (img.getAttribute("src") && img.complete && img.naturalWidth === 0) useFallback();
     });
 
     // รายการเครดิตรูป
     document.getElementById("credits").innerHTML = ANIMALS.map(function (a) {
-      return '<li><a href="https://commons.wikimedia.org/wiki/File:' + a.file + '" rel="noopener">' + a.name + '</a></li>';
+      var url = a.file ? "https://commons.wikimedia.org/wiki/File:" + a.file : "https://en.wikipedia.org/wiki/" + a.wiki.replace(/ /g, "_");
+      return '<li><a href="' + url + '" rel="noopener">' + a.name + '</a></li>';
     }).join("");
 
     var cards = list.querySelectorAll(".animal");
     var chips = chipsBox.querySelectorAll(".chip");
+
+    // สัตว์ที่ใช้ wiki: ดึงภาพหลักของบทความจาก Wikipedia เมื่อการ์ดเลื่อนเข้าใกล้หน้าจอ
+    function resolveWiki(card) {
+      var img = card.querySelector("img");
+      var name = card.querySelector("h3").textContent;
+      fetch("https://en.wikipedia.org/api/rest_v1/page/summary/" + encodeURIComponent(card.dataset.wiki.replace(/ /g, "_")))
+        .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+        .then(function (d) {
+          var th = d.thumbnail && d.thumbnail.source;
+          if (!th) throw new Error("no image");
+          var m = th.match(/\/commons\/thumb\/[0-9a-f]\/[0-9a-f]{2}\/([^\/]+)\//);
+          if (m) card.dataset.file = decodeURIComponent(m[1]); // ใช้ทำลิงก์ที่มาของภาพ
+          card.dataset.img = th.replace(/\/\d+px-/, "/960px-");  // ภาพใหญ่สำหรับหน้าต่างข้อมูล
+          img.alt = "ภาพถ่าย" + name;
+          img.src = th.replace(/\/\d+px-/, "/500px-");
+        })
+        .catch(function () { img.alt = "ภาพประกอบ" + name; img.src = img.dataset.fallback; });
+    }
+    var wikiCards = list.querySelectorAll(".animal[data-wiki]");
+    if ("IntersectionObserver" in window) {
+      var wio = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) { wio.unobserve(e.target); resolveWiki(e.target); } });
+      }, { rootMargin: "400px" });
+      wikiCards.forEach(function (c) { wio.observe(c); });
+    } else {
+      wikiCards.forEach(resolveWiki);
+    }
 
     function apply() {
       var q = state.q.trim().toLowerCase();
