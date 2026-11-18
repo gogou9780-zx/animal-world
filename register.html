@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@600;700&family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="motion.css">
+  <link rel="stylesheet" href="auth.css">
 </head>
 <body>
   <a class="skip" href="#form">ข้ามไปแบบฟอร์ม</a>
@@ -47,12 +48,14 @@
           <p class="sub">เป็นสมาชิกอยู่แล้ว? <a href="login.html">เข้าสู่ระบบ</a></p>
           <p class="sub">ช่องที่ไม่มีคำว่า "ไม่บังคับ" ต้องกรอกทุกช่อง</p>
 
+          <p class="form-group"><span class="num">1</span>ข้อมูลส่วนตัว</p>
           <div class="field">
             <label for="name">ชื่อ-นามสกุล</label>
             <input type="text" id="name" name="name" maxlength="100" autocomplete="name" aria-describedby="name-err">
             <div class="err" id="name-err"></div>
           </div>
 
+          <div class="field-row">
           <div class="field">
             <label for="email">อีเมล</label>
             <input type="email" id="email" name="email" maxlength="120" autocomplete="email" aria-describedby="email-err">
@@ -64,6 +67,10 @@
             <input type="tel" id="phone" name="phone" inputmode="numeric" placeholder="0812345678" maxlength="12" autocomplete="tel" aria-describedby="phone-err">
             <div class="err" id="phone-err"></div>
           </div>
+          </div>
+
+          <p class="form-group"><span class="num">2</span>ตั้งรหัสผ่าน</p>
+          <div class="field-row">
 
           <div class="field">
             <label for="password">รหัสผ่าน</label>
@@ -76,6 +83,10 @@
             <input type="password" id="password2" name="password2" maxlength="100" autocomplete="new-password" aria-describedby="password2-err">
             <div class="err" id="password2-err"></div>
           </div>
+          </div>
+
+          <p class="form-group"><span class="num">3</span>เพิ่มเติม (ไม่บังคับ)</p>
+          <div class="field-row">
 
           <div class="field">
             <label for="birthdate">วันเกิด <span class="opt">(ไม่บังคับ)</span></label>
@@ -93,6 +104,7 @@
               <option>YouTube</option>
               <option>อื่น ๆ</option>
             </select>
+          </div>
           </div>
 
           <!-- ช่องดักบอท: คนจริงมองไม่เห็นและจะไม่กรอก -->
@@ -131,12 +143,10 @@
     </div>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="supabase-config.js"></script>
   <script src="member.js"></script>
   <script>
-    // ==== ใส่ URL ของ Web App จาก Google Apps Script ตรงนี้ ====
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTkMMSRRMcPUaZ9afxPj98Mggxg3Wu54FMesUSKtZJaXxhUJtNDt-jWKCiMwN8yFj4mw/exec";
-    // ==========================================================
-
     // รูปสำรองกรณีรูปถ่ายโหลดไม่ได้
     document.querySelectorAll("img[data-fallback]").forEach(function (img) {
       function useFallback() {
@@ -202,8 +212,8 @@
       if (firstBad) { document.getElementById(firstBad[0]).focus(); return; }
       if (!consentOk) { document.getElementById("consent").focus(); return; }
 
-      if (SCRIPT_URL.startsWith("PASTE_")) {
-        banner.textContent = "ยังไม่ได้ตั้งค่า SCRIPT_URL ในไฟล์ register.html";
+      if (!window.sb) {
+        banner.textContent = "ยังไม่ได้ตั้งค่า Supabase ในไฟล์ supabase-config.js";
         banner.className = "banner show";
         return;
       }
@@ -213,26 +223,37 @@
       data.email = data.email.trim();
       data.phone = data.phone.replace(/[\s-]/g, "");
       delete data.password2;
-      data.action = "register";
+      if (data.website) return; // ช่องดักบอทถูกกรอก: ไม่ส่ง
 
       btn.disabled = true;
       btn.textContent = "กำลังส่งข้อมูล...";
       try {
-        const res = await fetch(SCRIPT_URL, {
-          method: "POST",
-          body: new URLSearchParams(data)
+        const { data: res, error } = await sb.auth.signUp({
+          email: data.email,
+          password: data.password,
+          options: { data: { name: data.name, phone: data.phone, birthdate: data.birthdate || null, source: data.source || null } }
         });
-        const result = await res.json();
-        if (result.ok) {
-          window.Member.set({ name: data.name, memberId: result.memberId }); // สมัครแล้วเข้าสู่ระบบให้ทันที
-          form.hidden = true;
-          document.getElementById("member-id").textContent = result.memberId;
-          done.hidden = false;
-          done.scrollIntoView({ block: "center" });
-        } else {
-          banner.textContent = result.error || "ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่อีกครั้ง";
+        if (error || (res.user && res.user.identities && res.user.identities.length === 0)) {
+          const msg = error ? error.message : "already registered";
+          banner.textContent = /already|registered/i.test(msg) ? "อีเมลนี้สมัครสมาชิกไว้แล้ว"
+            : /database error|duplicate|unique/i.test(msg) ? "อีเมลหรือเบอร์โทรนี้ถูกใช้สมัครแล้ว"
+            : "ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่อีกครั้ง";
           banner.className = "banner show";
+          return;
         }
+        if (!res.session) {
+          // เปิด Confirm email ไว้ใน Supabase: ต้องยืนยันอีเมลก่อนเข้าสู่ระบบ
+          banner.textContent = "สมัครแล้ว กรุณาเปิดอีเมลเพื่อยืนยัน จากนั้นเข้าสู่ระบบ";
+          banner.className = "banner show";
+          return;
+        }
+        const { data: mem } = await sb.from("members").select("member_id").eq("user_id", res.user.id).single();
+        const memberId = mem ? mem.member_id : "";
+        window.Member.set({ name: data.name, memberId: memberId }); // สมัครแล้วเข้าสู่ระบบให้ทันที
+        form.hidden = true;
+        document.getElementById("member-id").textContent = memberId;
+        done.hidden = false;
+        done.scrollIntoView({ block: "center" });
       } catch (err) {
         banner.textContent = "เชื่อมต่อไม่ได้ ตรวจสอบอินเทอร์เน็ตแล้วลองใหม่อีกครั้ง";
         banner.className = "banner show";
@@ -243,5 +264,6 @@
     });
   </script>
   <script src="motion.js"></script>
+  <script src="auth.js"></script>
 </body>
 </html>

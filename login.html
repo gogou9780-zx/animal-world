@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@600;700&family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="motion.css">
+  <link rel="stylesheet" href="auth.css">
 </head>
 <body>
   <a class="skip" href="#form">ข้ามไปแบบฟอร์ม</a>
@@ -35,6 +36,11 @@
           <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Vulpes_vulpes_ssp_fulvus.jpg?width=700"
                data-fallback="assets/fox.svg" alt="ภาพถ่ายสุนัขจิ้งจอกแดง" width="340" height="425">
         </figure>
+        <ul class="perks">
+          <li>เข้าเมนูสมาชิกได้ทันที</li>
+          <li>ทำแบบทดสอบสัตว์</li>
+          <li>อ่านเรื่องน่ารู้ประจำวัน</li>
+        </ul>
       </div>
 
       <div class="form-card">
@@ -65,10 +71,10 @@
     <div class="wrap"><p class="copy">© 2026 โลกสัตว์น่ารู้ สงวนลิขสิทธิ์</p></div>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="supabase-config.js"></script>
   <script src="member.js"></script>
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTkMMSRRMcPUaZ9afxPj98Mggxg3Wu54FMesUSKtZJaXxhUJtNDt-jWKCiMwN8yFj4mw/exec";
-
     document.querySelectorAll("img[data-fallback]").forEach(function (img) {
       function useFallback() { if (img.dataset.used) return; img.dataset.used = "1"; img.src = img.dataset.fallback; }
       img.addEventListener("error", useFallback);
@@ -76,7 +82,12 @@
     });
 
     // ถ้าล็อกอินอยู่แล้ว ไปเมนูสมาชิกเลย
-    if (window.Member.get()) location.replace("member.html");
+    if (window.sb) {
+      sb.auth.getSession().then(function (r) {
+        if (r.data.session) location.replace("member.html");
+        else window.Member.clear();
+      });
+    }
 
     const form = document.getElementById("form");
     const btn = document.getElementById("submit");
@@ -100,26 +111,30 @@
       if (emailBad) { document.getElementById("email").focus(); return; }
       if (passBad) { document.getElementById("password").focus(); return; }
 
+      if (!window.sb) {
+        banner.textContent = "ยังไม่ได้ตั้งค่า Supabase ในไฟล์ supabase-config.js";
+        banner.className = "banner show";
+        return;
+      }
+
       btn.disabled = true;
       btn.textContent = "กำลังตรวจสอบ...";
       try {
-        const res = await fetch(SCRIPT_URL, {
-          method: "POST",
-          body: new URLSearchParams({ action: "login", email: email, password: password })
-        });
-        const result = await res.json();
-        if (result.ok) {
-          if (result.mustChange) {
-            // ต้องเปลี่ยนรหัสผ่านก่อน (เก็บอีเมลไว้ชั่วคราวเพื่อใช้ในหน้าเปลี่ยนรหัส)
-            window.Member.set({ name: result.name, memberId: result.memberId, mustChange: true, email: email });
-            location.href = "change-password.html";
-          } else {
-            window.Member.set({ name: result.name, memberId: result.memberId });
-            location.href = "member.html";
-          }
-        } else {
-          banner.textContent = result.error || "เข้าสู่ระบบไม่สำเร็จ";
+        const { data, error } = await sb.auth.signInWithPassword({ email: email, password: password });
+        if (error) {
+          banner.textContent = /confirm/i.test(error.message) ? "กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ" : "อีเมลหรือรหัสผ่านไม่ถูกต้อง";
           banner.className = "banner show";
+          return;
+        }
+        const { data: mem } = await sb.from("members").select("name, member_id, must_change").eq("user_id", data.user.id).single();
+        const info = { name: mem ? mem.name : "", memberId: mem ? mem.member_id : "" };
+        if (mem && mem.must_change) {
+          info.mustChange = true; // ต้องเปลี่ยนรหัสผ่านก่อนใช้งาน
+          window.Member.set(info);
+          location.href = "change-password.html";
+        } else {
+          window.Member.set(info);
+          location.href = "member.html";
         }
       } catch (err) {
         banner.textContent = "เชื่อมต่อไม่ได้ ตรวจสอบอินเทอร์เน็ตแล้วลองใหม่อีกครั้ง";
@@ -131,5 +146,6 @@
     });
   </script>
   <script src="motion.js"></script>
+  <script src="auth.js"></script>
 </body>
 </html>

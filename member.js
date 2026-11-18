@@ -10,6 +10,7 @@
     },
     clear: function () {
       try { localStorage.removeItem(KEY); } catch (e) {}
+      if (window.sb) { try { window.sb.auth.signOut(); } catch (e) {} } // ออกจากระบบ Supabase ด้วย
     }
   };
 
