@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@600;700&family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="motion.css">
+  <link rel="stylesheet" href="auth.css">
 </head>
 <body>
   <a class="skip" href="#list">ข้ามไปรายการสัตว์</a>
@@ -29,9 +30,18 @@
 
   <main class="gallery">
     <div class="wrap">
+      <!-- ผู้ที่ยังไม่ได้เข้าสู่ระบบ -->
+      <section id="guest" hidden>
+        <h1>สัตว์น่ารู้สำหรับสมาชิก</h1>
+        <p class="notice">กรุณาเข้าสู่ระบบ หรือสมัครสมาชิกฟรี แล้วดูสัตว์ทั้ง 20 ชนิดได้ทันที</p>
+        <a class="btn btn-sun" href="login.html">เข้าสู่ระบบ</a>
+        <a class="btn btn-line" href="register.html">สมัครสมาชิกฟรี</a>
+      </section>
+
+      <div id="content">
       <div class="section-head">
         <h1 class="page-title">สัตว์น่ารู้</h1>
-        <p>สัตว์ 20 ชนิดจาก 6 กลุ่ม พิมพ์ชื่อเพื่อค้นหา หรือเลือกกลุ่มที่สนใจ</p>
+        <p>สัตว์ 20 ชนิดจาก 6 กลุ่ม พิมพ์ชื่อเพื่อค้นหา เลือกกลุ่มที่สนใจ หรือคลิกที่สัตว์เพื่อดูข้อมูล</p>
       </div>
 
       <div class="toolbar">
@@ -50,6 +60,7 @@
         <p>ไม่พบสัตว์ที่ตรงกับคำค้นหา ลองพิมพ์ชื่ออื่น หรือล้างตัวกรอง</p>
         <button class="btn btn-moss" type="button" id="reset">ล้างตัวกรอง</button>
       </div>
+      </div><!-- /content -->
     </div>
   </main>
 
@@ -64,6 +75,8 @@
     </div>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="supabase-config.js"></script>
   <script src="member.js"></script>
   <script>
     // ==== รายชื่อสัตว์ทั้งหมด ====
@@ -147,7 +160,7 @@
       var img = '<img ' + (n > 5 ? 'loading="lazy" ' : '') +
         'src="' + COMMONS + a.file + '?width=700" data-fallback="' + (a.fallback || "assets/placeholder.svg") +
         '" alt="ภาพถ่าย' + a.name + '" width="500" height="625">';
-      return '<article class="animal" data-group="' + a.group + '" data-search="' + (a.name + " " + GROUPS[a.group]) + '">' +
+      return '<article class="animal" data-file="' + a.file + '" data-group="' + a.group + '" data-search="' + (a.name + " " + GROUPS[a.group]) + '">' +
         '<figure>' + img + '</figure>' +
         '<h3>' + a.name + '</h3>' +
         '<p class="kind">' + GROUPS[a.group] + '</p>' +
@@ -197,7 +210,19 @@
     });
 
     apply();
+
+    // หน้านี้สำหรับสมาชิกเท่านั้น (ตรวจจากข้อมูลที่จำไว้ก่อน แล้วยืนยันกับ session ของ Supabase)
+    var guestBox = document.getElementById("guest");
+    var content = document.getElementById("content");
+    function gate(isGuest) { guestBox.hidden = !isGuest; content.hidden = isGuest; }
+    gate(!window.Member.get());
+    if (window.sb) {
+      sb.auth.getSession().then(function (r) {
+        if (!r.data.session) { window.Member.clear(); gate(true); }
+      });
+    }
   </script>
+  <script src="animal-detail.js"></script>
   <script src="motion.js"></script>
 </body>
 </html>

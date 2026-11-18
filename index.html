@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="motion.css">
 </head>
 <body>
-  <a class="skip" href="#animals">ข้ามไปเนื้อหา</a>
+  <a class="skip" href="#main">ข้ามไปเนื้อหา</a>
 
   <header class="site-header">
     <div class="wrap">
@@ -27,14 +27,14 @@
     </div>
   </header>
 
-  <main>
+  <main id="main">
     <section class="hero">
       <div class="wrap">
         <div>
           <h1>สัตว์ทุกชนิดมีเรื่องให้ทึ่ง มาดูกัน</h1>
           <p class="lead">ภาพถ่ายสัตว์จริงกับความรู้สั้น ๆ อ่านจบในไม่กี่นาที ตั้งแต่ช้างตัวโตไปจนถึงเพนกวินที่บินไม่ได้</p>
           <div class="hero-actions">
-            <a class="btn btn-sun" href="animals.html">ดูสัตว์ทั้งหมด</a>
+            <a class="btn btn-sun" href="animals.html" data-member-only>ดูสัตว์ทั้งหมด</a>
             <a class="btn btn-line" href="register.html" data-guest-only>สมัครสมาชิกฟรี</a>
           </div>
         </div>
@@ -57,7 +57,7 @@
       </div>
     </section>
 
-    <section class="gallery" id="animals">
+    <section class="gallery" id="animals" data-member-only>
       <div class="wrap">
         <div class="section-head">
           <h2>สัตว์เด่นที่ควรรู้จัก</h2>
@@ -65,7 +65,7 @@
         </div>
 
         <div class="animal-grid">
-          <article class="animal" data-type="mammal">
+          <article class="animal" data-type="mammal" data-file="Elephantidae_Loxodonta_africana_4.2.jpg">
             <figure>
               <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Elephantidae_Loxodonta_africana_4.2.jpg?width=700"
                    data-fallback="assets/elephant.svg" alt="ภาพถ่ายช้างแอฟริกา" width="500" height="625">
@@ -75,7 +75,7 @@
             <p>ช้างแอฟริกาเป็นสัตว์บกที่ใหญ่ที่สุดในโลก งวงใช้ได้ทั้งหายใจ ดื่มน้ำ หยิบจับ และทักทายกัน ส่วนช้างไทยเป็นสัตว์ประจำชาติของไทย</p>
           </article>
 
-          <article class="animal" data-type="bird">
+          <article class="animal" data-type="bird" data-file="Emperor_Penguin_Manchot_empereur.jpg">
             <figure>
               <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Emperor_Penguin_Manchot_empereur.jpg?width=700"
                    data-fallback="assets/penguin.svg" alt="ภาพถ่ายเพนกวินจักรพรรดิ" width="500" height="625">
@@ -85,7 +85,7 @@
             <p>บินไม่ได้ แต่ว่ายน้ำเก่งมาก ใช้ปีกพายน้ำเหมือนครีบ ส่วนใหญ่อาศัยอยู่ในซีกโลกใต้</p>
           </article>
 
-          <article class="animal" data-type="bird">
+          <article class="animal" data-type="bird" data-file="Barn_Owl,_Lancashire.jpg">
             <figure>
               <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Barn_Owl,_Lancashire.jpg?width=700"
                    data-fallback="assets/owl.svg" alt="ภาพถ่ายนกแสก" width="500" height="625">
@@ -95,7 +95,7 @@
             <p>ลูกตาขยับไม่ได้ แต่หมุนหัวได้ไกลประมาณ 270 องศา และได้ยินเสียงเหยื่อได้แม่นแม้ในที่มืด</p>
           </article>
 
-          <article class="animal" data-type="mammal">
+          <article class="animal" data-type="mammal" data-file="Vulpes_vulpes_ssp_fulvus.jpg">
             <figure>
               <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Vulpes_vulpes_ssp_fulvus.jpg?width=700"
                    data-fallback="assets/fox.svg" alt="ภาพถ่ายสุนัขจิ้งจอกแดง" width="500" height="625">
@@ -105,7 +105,7 @@
             <p>หูไวมาก ได้ยินเสียงเหยื่อตัวเล็กที่เคลื่อนไหวอยู่ไกล ๆ และปรับตัวอยู่ได้ในหลายสภาพแวดล้อม</p>
           </article>
 
-          <article class="animal" data-type="reptile">
+          <article class="animal" data-type="reptile" data-file="Green_Sea_Turtle_grazing_seagrass.jpg">
             <figure>
               <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Green_Sea_Turtle_grazing_seagrass.jpg?width=700"
                    data-fallback="assets/turtle.svg" alt="ภาพถ่ายเต่าทะเลกำลังกินหญ้าทะเล" width="500" height="625">
@@ -115,7 +115,7 @@
             <p>กระดองเป็นส่วนหนึ่งของโครงกระดูก ติดอยู่กับซี่โครงและกระดูกสันหลัง จึงถอดออกไม่ได้เหมือนเสื้อ</p>
           </article>
 
-          <article class="animal" data-type="mammal">
+          <article class="animal" data-type="mammal" data-file="Giant_Panda_2004-03-2.jpg">
             <figure>
               <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Giant_Panda_2004-03-2.jpg?width=700"
                    data-fallback="assets/panda.svg" alt="ภาพถ่ายแพนด้ายักษ์" width="500" height="625">
@@ -128,7 +128,7 @@
       </div>
     </section>
 
-    <div class="wrap more">
+    <div class="wrap more" data-member-only>
       <a class="btn btn-moss" href="animals.html">ดูสัตว์ทั้งหมด 20 ชนิด</a>
     </div>
 
@@ -204,6 +204,7 @@
       factEl.textContent = facts[idx];
     });
   </script>
+  <script src="animal-detail.js"></script>
   <script src="motion.js"></script>
 </body>
 </html>
