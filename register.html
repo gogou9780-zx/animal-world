@@ -234,10 +234,19 @@
           options: { data: { name: data.name, phone: data.phone, birthdate: data.birthdate || null, source: data.source || null } }
         });
         if (error || (res.user && res.user.identities && res.user.identities.length === 0)) {
+          if (error) console.error("signUp error:", error);
           const msg = error ? error.message : "already registered";
-          banner.textContent = /already|registered/i.test(msg) ? "อีเมลนี้สมัครสมาชิกไว้แล้ว"
-            : /database error|duplicate|unique/i.test(msg) ? "อีเมลหรือเบอร์โทรนี้ถูกใช้สมัครแล้ว"
-            : "ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่อีกครั้ง";
+          const code = error ? (error.code || error.status || "") : "";
+          let text;
+          if (!error || /already|registered/i.test(msg) || code === "user_already_exists") text = "อีเมลนี้สมัครสมาชิกไว้แล้ว";
+          else if (code === "over_email_send_rate_limit" || error.status === 429 || /rate limit/i.test(msg)) text = "ส่งอีเมลยืนยันบ่อยเกินไป กรุณารอสักครู่แล้วลองใหม่";
+          else if (/weak|password/i.test(msg)) text = "รหัสผ่านไม่ปลอดภัยพอ ลองเพิ่มความยาวหรือผสมตัวอักษรกับตัวเลข";
+          else if (/signups?.*(not allowed|disabled)/i.test(msg)) text = "ระบบปิดรับสมัครสมาชิกใน Supabase";
+          else if (/invalid/i.test(msg) && /email/i.test(msg)) text = "อีเมลนี้ใช้ไม่ได้ กรุณาใช้อีเมลอื่น";
+          else if (/database error/i.test(msg)) text = "บันทึกข้อมูลสมาชิกไม่สำเร็จ (อาจเป็นเบอร์โทรซ้ำ หรือยังไม่ได้รัน supabase-setup.sql)";
+          else text = "ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่อีกครั้ง";
+          if (error) text += " [" + (code || "error") + ": " + msg + "]"; // รายละเอียดสำหรับตรวจปัญหา ลบออกได้เมื่อระบบเสถียร
+          banner.textContent = text;
           banner.className = "banner show";
           return;
         }
