@@ -61,7 +61,9 @@
     img.src = card.dataset.img || (file ? COMMONS + file + "?width=1000" : (cardImg && cardImg.getAttribute("src")) || fallback);
     img.alt = "ภาพถ่าย" + name;
 
-    dlg.querySelector(".ad-kind").textContent = (card.querySelector(".kind") || {}).textContent || "";
+    var kindTxt = (card.querySelector(".kind") || {}).textContent || "";
+    if (card.dataset.regionLabel) kindTxt += " · " + card.dataset.regionLabel;
+    dlg.querySelector(".ad-kind").textContent = kindTxt;
     dlg.querySelector("h2").textContent = name;
     dlg.querySelector(".ad-fact").textContent = (card.querySelector("p:not(.kind)") || {}).textContent || "";
     dlg.querySelector(".ad-wiki").href = "https://th.wikipedia.org/wiki/Special:Search?search=" + encodeURIComponent(name);

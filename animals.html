@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="motion.css">
   <link rel="stylesheet" href="auth.css">
+  <style>.animal .region{margin:6px 0 0;font-size:.9rem;color:var(--muted,#5b6b61)}</style>
 </head>
 <body>
   <a class="skip" href="#list">ข้ามไปรายการสัตว์</a>
@@ -33,7 +34,7 @@
       <!-- ผู้ที่ยังไม่ได้เข้าสู่ระบบ -->
       <section id="guest" hidden>
         <h1>สัตว์น่ารู้สำหรับสมาชิก</h1>
-        <p class="notice">กรุณาเข้าสู่ระบบ หรือสมัครสมาชิกฟรี แล้วดูสัตว์ทั้ง 112 ชนิดได้ทันที</p>
+        <p class="notice">กรุณาเข้าสู่ระบบ หรือสมัครสมาชิกฟรี แล้วดูสัตว์ทั้ง 177 ชนิดได้ทันที</p>
         <a class="btn btn-sun" href="login.html">เข้าสู่ระบบ</a>
         <a class="btn btn-line" href="register.html">สมัครสมาชิกฟรี</a>
       </section>
@@ -41,7 +42,7 @@
       <div id="content">
       <div class="section-head">
         <h1 class="page-title">สัตว์น่ารู้</h1>
-        <p>สัตว์ <span id="total">112</span> ชนิดจาก 6 กลุ่ม พิมพ์ชื่อเพื่อค้นหา เลือกกลุ่มที่สนใจ หรือคลิกที่สัตว์เพื่อดูข้อมูล</p>
+        <p>สัตว์ <span id="total">177</span> ชนิดจาก 6 กลุ่ม 8 ภูมิภาค พิมพ์ชื่อเพื่อค้นหา เลือกกลุ่มหรือภูมิภาคที่สนใจ หรือคลิกที่สัตว์เพื่อดูข้อมูล</p>
       </div>
 
       <div class="toolbar">
@@ -50,6 +51,7 @@
           <input type="search" id="q" placeholder="ค้นหาชื่อสัตว์ เช่น ช้าง" autocomplete="off">
         </div>
         <div class="chips" id="chips" role="group" aria-label="กรองตามกลุ่มสัตว์"></div>
+        <div class="chips" id="rchips" role="group" aria-label="กรองตามภูมิภาค"></div>
       </div>
 
       <p class="count" id="count" role="status"></p>
@@ -85,6 +87,8 @@
     //   file = ชื่อไฟล์รูปบน Wikimedia Commons (ส่วนหลัง "File:" ในลิงก์หน้าไฟล์)
     //   fallback = ภาพวาดสำรองในโฟลเดอร์ assets (ไม่ใส่ก็ได้)
     var COMMONS = "https://commons.wikimedia.org/wiki/Special:FilePath/";
+    var REGIONS = { as: "เอเชีย", af: "แอฟริกา", eu: "ยุโรป", na: "อเมริกาเหนือ", sa: "อเมริกาใต้", oc: "โอเชียเนีย", an: "แอนตาร์กติกา", sea: "ทะเลและมหาสมุทร", world: "พบทั่วโลก" };
+    function regionText(c) { return (c || "").split(" ").map(function (k) { return REGIONS[k]; }).join(", "); }
     var GROUPS = {
       mammal: "สัตว์เลี้ยงลูกด้วยนม",
       bird: "นก",
@@ -94,244 +98,374 @@
       invertebrate: "สัตว์ไม่มีกระดูกสันหลัง"
     };
     var ANIMALS = [
-      { name: "ช้าง", group: "mammal", file: "Elephantidae_Loxodonta_africana_4.2.jpg", fallback: "assets/elephant.svg",
+      { name: "ช้าง", group: "mammal", region: "af as", file: "Elephantidae_Loxodonta_africana_4.2.jpg", fallback: "assets/elephant.svg",
         fact: "ช้างแอฟริกาเป็นสัตว์บกที่ใหญ่ที่สุดในโลก งวงใช้ได้ทั้งหายใจ ดื่มน้ำ หยิบจับ และทักทายกัน ส่วนช้างไทยเป็นสัตว์ประจำชาติของไทย" },
-      { name: "เสือโคร่ง", group: "mammal", file: "Royal_Bengal_Tiger.jpg",
+      { name: "เสือโคร่ง", group: "mammal", region: "as", file: "Royal_Bengal_Tiger.jpg",
         fact: "เป็นแมวป่าที่ใหญ่ที่สุดในโลก ลายบนตัวของแต่ละตัวไม่เหมือนกัน เหมือนลายนิ้วมือของคน" },
-      { name: "ยีราฟ", group: "mammal", file: "Giraffa_camelopardalis_angolensis.jpg",
+      { name: "ยีราฟ", group: "mammal", region: "af", file: "Giraffa_camelopardalis_angolensis.jpg",
         fact: "เป็นสัตว์ที่สูงที่สุดในโลก ลิ้นยาวมาก ใช้ม้วนใบไม้จากยอดไม้สูง ๆ มากิน" },
-      { name: "โลมา", group: "mammal", file: "Tursiops_truncatus_01.jpg",
+      { name: "โลมา", group: "mammal", region: "sea", file: "Tursiops_truncatus_01.jpg",
         fact: "ส่งเสียงคลิกออกไปแล้วฟังเสียงสะท้อนกลับ เพื่อหาทางและหาอาหารใต้น้ำ" },
-      { name: "จิงโจ้", group: "mammal", file: "Red_kangaroo.jpg",
+      { name: "จิงโจ้", group: "mammal", region: "oc", file: "Red_kangaroo.jpg",
         fact: "กระโดดด้วยขาหลังที่แข็งแรง ลูกอ่อนตัวเล็กมากตอนเกิด แล้วอาศัยอยู่ในกระเป๋าหน้าท้องของแม่ต่อ" },
-      { name: "สุนัขจิ้งจอกแดง", group: "mammal", file: "Vulpes_vulpes_ssp_fulvus.jpg", fallback: "assets/fox.svg",
+      { name: "สุนัขจิ้งจอกแดง", group: "mammal", region: "eu as na", file: "Vulpes_vulpes_ssp_fulvus.jpg", fallback: "assets/fox.svg",
         fact: "หูไวมาก ได้ยินเสียงเหยื่อตัวเล็กที่เคลื่อนไหวอยู่ไกล ๆ และปรับตัวอยู่ได้ในหลายสภาพแวดล้อม" },
-      { name: "แพนด้ายักษ์", group: "mammal", file: "Giant_Panda_2004-03-2.jpg", fallback: "assets/panda.svg",
+      { name: "แพนด้ายักษ์", group: "mammal", region: "as", file: "Giant_Panda_2004-03-2.jpg", fallback: "assets/panda.svg",
         fact: "กินไผ่เป็นอาหารหลัก และใช้เวลากินหลายชั่วโมงต่อวัน พบตามธรรมชาติในประเทศจีน" },
 
-      { name: "เพนกวิน", group: "bird", file: "Emperor_Penguin_Manchot_empereur.jpg", fallback: "assets/penguin.svg",
+      { name: "เพนกวิน", group: "bird", region: "an", file: "Emperor_Penguin_Manchot_empereur.jpg", fallback: "assets/penguin.svg",
         fact: "บินไม่ได้ แต่ว่ายน้ำเก่งมาก ใช้ปีกพายน้ำเหมือนครีบ ส่วนใหญ่อาศัยอยู่ในซีกโลกใต้" },
-      { name: "นกแสก", group: "bird", file: "Barn_Owl,_Lancashire.jpg", fallback: "assets/owl.svg",
+      { name: "นกแสก", group: "bird", region: "world", file: "Barn_Owl,_Lancashire.jpg", fallback: "assets/owl.svg",
         fact: "ลูกตาขยับไม่ได้ แต่หมุนหัวได้ไกลประมาณ 270 องศา และได้ยินเสียงเหยื่อได้แม่นแม้ในที่มืด" },
-      { name: "นกยูง", group: "bird", file: "Indian_Peacock_or_peacock.jpg",
+      { name: "นกยูง", group: "bird", region: "as", file: "Indian_Peacock_or_peacock.jpg",
         fact: "นกยูงตัวผู้มีขนหางยาวเป็นพัด ใช้รำแพนเพื่อเรียกความสนใจจากตัวเมีย" },
-      { name: "นกฟลามิงโก", group: "bird", file: "Greater_Flamingo_(Phoenicopterus_roseus)_(8521269688).jpg",
+      { name: "นกฟลามิงโก", group: "bird", region: "af eu as sa", file: "Greater_Flamingo_(Phoenicopterus_roseus)_(8521269688).jpg",
         fact: "สีชมพูของขนมาจากสารสีในอาหารที่กิน เช่น สัตว์น้ำเล็ก ๆ และสาหร่าย" },
-      { name: "นกเงือก", group: "bird", file: "Great-Hornbill.jpg",
+      { name: "นกเงือก", group: "bird", region: "as", file: "Great-Hornbill.jpg",
         fact: "จะงอยปากใหญ่และมีโหนกบนหัว ตัวเมียทำรังในโพรงไม้ แล้วตัวผู้คอยนำอาหารมาให้ พบในป่าของไทยด้วย" },
 
-      { name: "เต่าทะเล", group: "reptile", file: "Green_Sea_Turtle_grazing_seagrass.jpg", fallback: "assets/turtle.svg",
+      { name: "เต่าทะเล", group: "reptile", region: "sea", file: "Green_Sea_Turtle_grazing_seagrass.jpg", fallback: "assets/turtle.svg",
         fact: "กระดองเป็นส่วนหนึ่งของโครงกระดูก ติดอยู่กับซี่โครงและกระดูกสันหลัง จึงถอดออกไม่ได้เหมือนเสื้อ" },
-      { name: "จระเข้น้ำเค็ม", group: "reptile", file: "Saltwater_Crocodile_(Crocodylus_porosus)_(10106331165).jpg",
+      { name: "จระเข้น้ำเค็ม", group: "reptile", region: "as oc", file: "Saltwater_Crocodile_(Crocodylus_porosus)_(10106331165).jpg",
         fact: "เป็นสัตว์เลื้อยคลานที่ใหญ่ที่สุดในโลก ว่ายน้ำเก่ง และอยู่ได้ทั้งในน้ำจืดและน้ำเค็ม" },
-      { name: "กิ้งก่าคาเมเลียน", group: "reptile", file: "Chamaeleo_calyptratus_01.jpg",
+      { name: "กิ้งก่าคาเมเลียน", group: "reptile", region: "af", file: "Chamaeleo_calyptratus_01.jpg",
         fact: "กลอกตาแต่ละข้างได้อิสระ และพุ่งลิ้นยาว ๆ ออกไปจับแมลง" },
 
-      { name: "กบตาแดง", group: "amphibian", file: "Agalychnis_callidryas.jpg",
+      { name: "กบตาแดง", group: "amphibian", region: "na sa", file: "Agalychnis_callidryas.jpg",
         fact: "กลางวันมันหลับโดยหุบตาและเกาะใบไม้ เชื่อกันว่าตาสีแดงสดช่วยทำให้ศัตรูตกใจเมื่อมันลืมตาขึ้นมา" },
 
-      { name: "ปลาการ์ตูน", group: "fish", file: "Common_clownfish.jpg",
+      { name: "ปลาการ์ตูน", group: "fish", region: "sea", file: "Common_clownfish.jpg",
         fact: "อาศัยอยู่ในดงดอกไม้ทะเลได้ เพราะมีเมือกที่ช่วยให้ไม่ถูกพิษของดอกไม้ทะเล" },
-      { name: "ม้าน้ำ", group: "fish", file: "Lined_seahorse,_Hippocampus_erectus.jpg",
+      { name: "ม้าน้ำ", group: "fish", region: "sea", file: "Lined_seahorse,_Hippocampus_erectus.jpg",
         fact: "ตัวผู้เป็นฝ่ายอุ้มท้องและคลอดลูก โดยตัวเมียวางไข่ไว้ในถุงหน้าท้องของตัวผู้" },
 
-      { name: "ผีเสื้อมอนาร์ค", group: "invertebrate", file: "Monarch_Butterfly_Danaus_plexippus_on_Echinacea_purpurea_2800px.jpg",
+      { name: "ผีเสื้อมอนาร์ค", group: "invertebrate", region: "na", file: "Monarch_Butterfly_Danaus_plexippus_on_Echinacea_purpurea_2800px.jpg",
         fact: "บินอพยพไกลหลายพันกิโลเมตรในอเมริกาเหนือ เพื่อหนีอากาศหนาว" },
-      { name: "หมึกสาย", group: "invertebrate", file: "Common_octopus.jpg",
+      { name: "หมึกสาย", group: "invertebrate", region: "sea", file: "Common_octopus.jpg",
         fact: "มีหัวใจ 3 ดวง และเลือดเป็นสีฟ้า (ในภาษาพูดมักเรียกว่าปลาหมึกยักษ์)" },
 
       // ---- สัตว์ชุดที่เพิ่ม: ใช้ wiki = ชื่อบทความบน en.wikipedia.org แล้วระบบจะดึงภาพหลักของบทความมาให้เอง ----
-      { name: "สิงโต", group: "mammal", wiki: "Lion",
+      { name: "สิงโต", group: "mammal", region: "af as", wiki: "Lion",
         fact: "เป็นแมวใหญ่ชนิดเดียวที่อยู่รวมกันเป็นฝูง เรียกว่าไพรด์ โดยส่วนใหญ่ตัวเมียเป็นฝ่ายออกล่าเหยื่อ" },
-      { name: "หมีขั้วโลก", group: "mammal", wiki: "Polar bear",
+      { name: "หมีขั้วโลก", group: "mammal", region: "na eu as", wiki: "Polar bear",
         fact: "ใต้ขนสีขาวคือผิวหนังสีดำที่ช่วยดูดซับความร้อน และว่ายน้ำได้เก่งมาก" },
-      { name: "ม้าลาย", group: "mammal", wiki: "Plains zebra",
+      { name: "ม้าลาย", group: "mammal", region: "af", wiki: "Plains zebra",
         fact: "ลายของม้าลายแต่ละตัวไม่เหมือนกัน และลูกม้าลายลุกขึ้นยืนได้ไม่นานหลังคลอด" },
-      { name: "เสือชีตาห์", group: "mammal", wiki: "Cheetah",
+      { name: "เสือชีตาห์", group: "mammal", region: "af", wiki: "Cheetah",
         fact: "เป็นสัตว์บกที่วิ่งเร็วที่สุดในโลก ทำความเร็วได้ราว 100 กิโลเมตรต่อชั่วโมงในระยะสั้น ๆ" },
-      { name: "โคอาลา", group: "mammal", wiki: "Koala",
+      { name: "โคอาลา", group: "mammal", region: "oc", wiki: "Koala",
         fact: "ไม่ใช่หมี แต่เป็นสัตว์มีกระเป๋าหน้าท้อง กินใบยูคาลิปตัสเป็นหลัก และพบในประเทศออสเตรเลีย" },
-      { name: "อุรังอุตัง", group: "mammal", wiki: "Orangutan",
+      { name: "อุรังอุตัง", group: "mammal", region: "as", wiki: "Orangutan",
         fact: "ชื่อในภาษามลายูแปลว่า คนแห่งป่า พบตามธรรมชาติบนเกาะบอร์เนียวและเกาะสุมาตราเท่านั้น" },
-      { name: "ชะนีมือขาว", group: "mammal", wiki: "Lar gibbon",
+      { name: "ชะนีมือขาว", group: "mammal", region: "as", wiki: "Lar gibbon",
         fact: "พบในป่าของไทย ใช้แขนยาว ๆ โหนไปตามต้นไม้ และส่งเสียงร้องดังก้องไปทั้งป่า" },
-      { name: "ฮิปโปโปเตมัส", group: "mammal", wiki: "Hippopotamus",
+      { name: "ฮิปโปโปเตมัส", group: "mammal", region: "af", wiki: "Hippopotamus",
         fact: "ใช้เวลาส่วนใหญ่ของวันแช่ตัวในน้ำ แล้วขึ้นมากินหญ้าตอนกลางคืน" },
 
-      { name: "นกอินทรีหัวขาว", group: "bird", wiki: "Bald eagle",
+      { name: "นกอินทรีหัวขาว", group: "bird", region: "na", wiki: "Bald eagle",
         fact: "เป็นนกประจำชาติของสหรัฐอเมริกา ตัวเต็มวัยมีหัวและหางสีขาว และสร้างรังขนาดใหญ่มากไว้ใช้ซ้ำหลายปี" },
-      { name: "นกกระเต็นธรรมดา", group: "bird", wiki: "Common kingfisher",
+      { name: "นกกระเต็นธรรมดา", group: "bird", region: "eu as af", wiki: "Common kingfisher",
         fact: "เกาะรอบนิ่ง ๆ ริมน้ำ แล้วพุ่งลงไปจับปลาด้วยจะงอยปากแหลม" },
-      { name: "นกทูแคนโตโก", group: "bird", wiki: "Toco toucan",
+      { name: "นกทูแคนโตโก", group: "bird", region: "sa", wiki: "Toco toucan",
         fact: "จะงอยปากใหญ่สีส้มสด แต่เบามากเพราะข้างในโปร่ง และช่วยระบายความร้อนออกจากตัวได้ด้วย" },
-      { name: "นกกระจอกเทศ", group: "bird", wiki: "Common ostrich",
+      { name: "นกกระจอกเทศ", group: "bird", region: "af", wiki: "Common ostrich",
         fact: "เป็นนกที่ใหญ่ที่สุดในโลก บินไม่ได้ แต่วิ่งได้เร็วราว 70 กิโลเมตรต่อชั่วโมง" },
 
-      { name: "มังกรโคโมโด", group: "reptile", wiki: "Komodo dragon",
+      { name: "มังกรโคโมโด", group: "reptile", region: "as", wiki: "Komodo dragon",
         fact: "เป็นกิ้งก่าที่ใหญ่ที่สุดในโลก พบตามธรรมชาติบนเกาะบางแห่งของประเทศอินโดนีเซีย" },
-      { name: "พญางูเห่า", group: "reptile", wiki: "King cobra",
+      { name: "พญางูเห่า", group: "reptile", region: "as", wiki: "King cobra",
         fact: "เป็นงูพิษที่ยาวที่สุดในโลก กินงูชนิดอื่นเป็นอาหารหลัก และพบในประเทศไทยด้วย" },
 
-      { name: "แอกซอลอเติล", group: "amphibian", wiki: "Axolotl",
+      { name: "แอกซอลอเติล", group: "amphibian", region: "na", wiki: "Axolotl",
         fact: "เป็นซาลาแมนเดอร์ที่มีเหงือกนอกตลอดชีวิต และงอกอวัยวะบางส่วน เช่น ขา กลับมาใหม่ได้" },
-      { name: "กบพิษลูกดอก", group: "amphibian", wiki: "Poison dart frog",
+      { name: "กบพิษลูกดอก", group: "amphibian", region: "sa", wiki: "Poison dart frog",
         fact: "สีสดใสเป็นสัญญาณเตือนศัตรูว่ามีพิษ ซึ่งพิษมาจากอาหารที่มันกินในธรรมชาติ" },
 
-      { name: "ปลากัด", group: "fish", wiki: "Siamese fighting fish",
+      { name: "ปลากัด", group: "fish", region: "as", wiki: "Siamese fighting fish",
         fact: "ตัวผู้ก้าวร้าวและสู้กันเอง ตอนผสมพันธุ์จะพ่นฟองอากาศทำรัง แล้วดูแลไข่เอง เป็นสัตว์น้ำประจำชาติของไทย" },
-      { name: "ฉลามวาฬ", group: "fish", wiki: "Whale shark",
+      { name: "ฉลามวาฬ", group: "fish", region: "sea", wiki: "Whale shark",
         fact: "เป็นปลาที่ใหญ่ที่สุดในโลก กินแพลงก์ตอนเป็นอาหาร และไม่เป็นอันตรายต่อคน" },
 
-      { name: "ผึ้ง", group: "invertebrate", wiki: "Western honey bee",
+      { name: "ผึ้ง", group: "invertebrate", region: "world", wiki: "Western honey bee",
         fact: "บอกทิศทางและระยะของแหล่งอาหารให้เพื่อนในรังด้วยการเต้นรำ" },
-      { name: "แมงกะพรุน", group: "invertebrate", wiki: "Jellyfish",
+      { name: "แมงกะพรุน", group: "invertebrate", region: "sea", wiki: "Jellyfish",
         fact: "ไม่มีสมอง หัวใจ หรือกระดูก ลำตัวส่วนใหญ่เป็นน้ำ" },
 
       // ---- ชุดที่ 2 (ใช้ wiki เช่นเดียวกัน) ----
-      { name: "กอริลลา", group: "mammal", wiki: "Gorilla",
+      { name: "กอริลลา", group: "mammal", region: "af", wiki: "Gorilla",
         fact: "เป็นลิงใหญ่ที่ตัวใหญ่ที่สุด อยู่รวมกันเป็นกลุ่มที่มีตัวผู้หลังสีเงินเป็นผู้นำ" },
-      { name: "ชิมแปนซี", group: "mammal", wiki: "Chimpanzee",
+      { name: "ชิมแปนซี", group: "mammal", region: "af", wiki: "Chimpanzee",
         fact: "ใช้เครื่องมือเป็น เช่น ใช้กิ่งไม้เขี่ยปลวกมากิน และมีดีเอ็นเอใกล้เคียงกับคนมาก" },
-      { name: "แพนด้าแดง", group: "mammal", wiki: "Red panda",
+      { name: "แพนด้าแดง", group: "mammal", region: "as", wiki: "Red panda",
         fact: "ไม่ใช่ญาติใกล้ชิดของแพนด้ายักษ์ กินไผ่เป็นหลัก และมีหางฟูลายเป็นวง ๆ" },
-      { name: "หมาป่า", group: "mammal", wiki: "Gray wolf",
+      { name: "หมาป่า", group: "mammal", region: "na eu as", wiki: "Gray wolf",
         fact: "อยู่เป็นฝูง หอนเพื่อสื่อสารกัน และเป็นญาติใกล้ชิดของสุนัขบ้าน" },
-      { name: "หมีสีน้ำตาล", group: "mammal", wiki: "Brown bear",
+      { name: "หมีสีน้ำตาล", group: "mammal", region: "na eu as", wiki: "Brown bear",
         fact: "กินได้ทั้งพืชและสัตว์ และในพื้นที่หนาวเย็นจะจำศีลตลอดฤดูหนาว" },
-      { name: "แรดขาว", group: "mammal", wiki: "White rhinoceros",
+      { name: "แรดขาว", group: "mammal", region: "af", wiki: "White rhinoceros",
         fact: "เป็นแรดที่ใหญ่ที่สุด มีนอ 2 อัน และกินหญ้าเป็นอาหารหลัก" },
-      { name: "คาปิบารา", group: "mammal", wiki: "Capybara",
+      { name: "คาปิบารา", group: "mammal", region: "sa", wiki: "Capybara",
         fact: "เป็นสัตว์ฟันแทะที่ใหญ่ที่สุดในโลก ชอบอยู่ใกล้น้ำ ว่ายน้ำเก่ง และพบในอเมริกาใต้" },
-      { name: "สลอธ", group: "mammal", wiki: "Sloth",
+      { name: "สลอธ", group: "mammal", region: "sa", wiki: "Sloth",
         fact: "ใช้เวลาส่วนใหญ่ห้อยอยู่บนต้นไม้ และเคลื่อนที่ช้ามาก" },
-      { name: "เมียร์แคต", group: "mammal", wiki: "Meerkat",
+      { name: "เมียร์แคต", group: "mammal", region: "af", wiki: "Meerkat",
         fact: "ผลัดกันยืนสองขาคอยเฝ้าระวังอันตราย ขณะที่ตัวอื่นในฝูงหาอาหาร" },
-      { name: "สุนัขจิ้งจอกอาร์กติก", group: "mammal", wiki: "Arctic fox",
+      { name: "สุนัขจิ้งจอกอาร์กติก", group: "mammal", region: "na eu as", wiki: "Arctic fox",
         fact: "ขนหนาแน่นช่วยกันหนาว และเปลี่ยนสีตามฤดูกาลเพื่อกลมกลืนกับสภาพแวดล้อม" },
-      { name: "ค้างคาว", group: "mammal", wiki: "Bat",
+      { name: "ค้างคาว", group: "mammal", region: "world", wiki: "Bat",
         fact: "เป็นสัตว์เลี้ยงลูกด้วยนมชนิดเดียวที่บินได้จริง และหลายชนิดใช้เสียงสะท้อนหาเหยื่อในที่มืด" },
-      { name: "วอมแบต", group: "mammal", wiki: "Common wombat",
+      { name: "วอมแบต", group: "mammal", region: "oc", wiki: "Common wombat",
         fact: "ขับถ่ายเป็นก้อนทรงลูกบาศก์ ใช้วางทำเครื่องหมายอาณาเขต และพบในประเทศออสเตรเลีย" },
-      { name: "นากทะเล", group: "mammal", wiki: "Sea otter",
+      { name: "นากทะเล", group: "mammal", region: "na as", wiki: "Sea otter",
         fact: "ใช้หินทุบเปิดเปลือกหอย และนอนหลับโดยจับมือกันไว้เพื่อไม่ให้ลอยห่างกัน" },
-      { name: "วาฬหลังค่อม", group: "mammal", wiki: "Humpback whale",
+      { name: "วาฬหลังค่อม", group: "mammal", region: "sea", wiki: "Humpback whale",
         fact: "ตัวผู้ร้องเพลงที่ซับซ้อน และเพลงของแต่ละฝูงเปลี่ยนไปเรื่อย ๆ ตามกาลเวลา" },
-      { name: "วาฬสีน้ำเงิน", group: "mammal", wiki: "Blue whale",
+      { name: "วาฬสีน้ำเงิน", group: "mammal", region: "sea", wiki: "Blue whale",
         fact: "เป็นสัตว์ที่ใหญ่ที่สุดเท่าที่เคยมีมาในโลก และกินคริลล์ตัวเล็ก ๆ เป็นอาหารหลัก" },
-      { name: "วอลรัส", group: "mammal", wiki: "Walrus",
+      { name: "วอลรัส", group: "mammal", region: "na eu as", wiki: "Walrus",
         fact: "ใช้งายาวช่วยดึงตัวขึ้นไปบนแผ่นน้ำแข็ง และหนวดไวต่อการสัมผัสไว้หาหอยตามพื้นทะเล" },
-      { name: "เสือดาว", group: "mammal", wiki: "Leopard",
+      { name: "เสือดาว", group: "mammal", region: "af as", wiki: "Leopard",
         fact: "ลากเหยื่อขึ้นไปกินบนต้นไม้ เพื่อไม่ให้สัตว์อื่นมาแย่ง" },
-      { name: "หมีหมา", group: "mammal", wiki: "Sun bear",
+      { name: "หมีหมา", group: "mammal", region: "as", wiki: "Sun bear",
         fact: "เป็นหมีที่เล็กที่สุดในโลก พบในป่าของไทย และมีลิ้นยาวไว้ตวัดกินน้ำผึ้งกับแมลง" },
-      { name: "กระทิง", group: "mammal", wiki: "Gaur",
+      { name: "กระทิง", group: "mammal", region: "as", wiki: "Gaur",
         fact: "เป็นวัวป่าที่ใหญ่ที่สุดในโลก และพบในป่าของไทย" },
-      { name: "บินตุรง", group: "mammal", wiki: "Binturong",
+      { name: "บินตุรง", group: "mammal", region: "as", wiki: "Binturong",
         fact: "หางจับกิ่งไม้ได้เหมือนมือ ตัวมีกลิ่นคล้ายป๊อปคอร์น และพบในป่าของไทย" },
-      { name: "ฮัมมิงเบิร์ด", group: "bird", wiki: "Hummingbird",
+      { name: "ฮัมมิงเบิร์ด", group: "bird", region: "na sa", wiki: "Hummingbird",
         fact: "บินถอยหลังได้ และกระพือปีกเร็วมากหลายสิบครั้งต่อวินาที" },
-      { name: "นกมาคอว์สีแดง", group: "bird", wiki: "Scarlet macaw",
+      { name: "นกมาคอว์สีแดง", group: "bird", region: "sa", wiki: "Scarlet macaw",
         fact: "ขนสีสดใสหลายสี อาศัยในป่าของอเมริกากลางและอเมริกาใต้ และส่งเสียงร้องดังไปไกล" },
-      { name: "นกอีมู", group: "bird", wiki: "Emu",
+      { name: "นกอีมู", group: "bird", region: "oc", wiki: "Emu",
         fact: "เป็นนกที่ใหญ่เป็นอันดับสองของโลก บินไม่ได้ และตัวผู้เป็นฝ่ายกกไข่" },
-      { name: "นกปรอดหัวโขน", group: "bird", wiki: "Red-whiskered bulbul",
+      { name: "นกปรอดหัวโขน", group: "bird", region: "as", wiki: "Red-whiskered bulbul",
         fact: "มีหงอนแหลมบนหัวและแต้มสีแดงใต้ตา พบในประเทศไทย และมีเสียงร้องไพเราะ" },
-      { name: "นกพัฟฟิน", group: "bird", wiki: "Atlantic puffin",
+      { name: "นกพัฟฟิน", group: "bird", region: "eu na", wiki: "Atlantic puffin",
         fact: "จะงอยปากสีสดใส กระพือปีกว่ายใต้น้ำจับปลา และคาบปลาตัวเล็กได้ทีละหลายตัว" },
-      { name: "นกเค้าแมวหิมะ", group: "bird", wiki: "Snowy owl",
+      { name: "นกเค้าแมวหิมะ", group: "bird", region: "na eu as", wiki: "Snowy owl",
         fact: "ขนสีขาวกลมกลืนกับหิมะ และล่าเหยื่อได้ทั้งกลางวันและกลางคืน" },
-      { name: "นกพิราบ", group: "bird", wiki: "Rock dove",
+      { name: "นกพิราบ", group: "bird", region: "world", wiki: "Rock dove",
         fact: "หาทางกลับรังได้แม่นยำ แม้ถูกพาไปปล่อยไกลหลายร้อยกิโลเมตร" },
-      { name: "นกกระเรียนพันธุ์ไทย", group: "bird", wiki: "Sarus crane",
+      { name: "นกกระเรียนพันธุ์ไทย", group: "bird", region: "as oc", wiki: "Sarus crane",
         fact: "เป็นนกที่บินได้และสูงที่สุดในโลก เคยสูญพันธุ์จากธรรมชาติในไทย ต่อมามีโครงการนำกลับคืนสู่ธรรมชาติ" },
-      { name: "นกอัลบาทรอส", group: "bird", wiki: "Wandering albatross",
+      { name: "นกอัลบาทรอส", group: "bird", region: "sea", wiki: "Wandering albatross",
         fact: "กางปีกได้กว้างกว่า 3 เมตร และร่อนไปตามลมเหนือทะเลได้นานโดยแทบไม่กระพือปีก" },
-      { name: "นกกีวี", group: "bird", wiki: "Kiwi",
+      { name: "นกกีวี", group: "bird", region: "oc", wiki: "Kiwi",
         fact: "บินไม่ได้ พบเฉพาะในนิวซีแลนด์ และออกไข่ที่ใหญ่มากเมื่อเทียบกับขนาดตัว" },
-      { name: "อนาคอนดาเขียว", group: "reptile", wiki: "Green anaconda",
+      { name: "อนาคอนดาเขียว", group: "reptile", region: "sa", wiki: "Green anaconda",
         fact: "เป็นงูที่หนักที่สุดในโลก ชอบอยู่ในน้ำของป่าในอเมริกาใต้" },
-      { name: "งูเหลือม", group: "reptile", wiki: "Reticulated python",
+      { name: "งูเหลือม", group: "reptile", region: "as", wiki: "Reticulated python",
         fact: "เป็นงูที่ยาวที่สุดในโลก และพบในประเทศไทย" },
-      { name: "อีกัวน่าเขียว", group: "reptile", wiki: "Green iguana",
+      { name: "อีกัวน่าเขียว", group: "reptile", region: "na sa", wiki: "Green iguana",
         fact: "ว่ายน้ำและดำน้ำได้ดี และมักกินพืชเป็นอาหาร" },
-      { name: "เต่ายักษ์อัลดาบรา", group: "reptile", wiki: "Aldabra giant tortoise",
+      { name: "เต่ายักษ์อัลดาบรา", group: "reptile", region: "af", wiki: "Aldabra giant tortoise",
         fact: "เป็นเต่าบกขนาดยักษ์ที่อายุยืน อาจมีชีวิตได้เกิน 100 ปี" },
-      { name: "ปีศาจหนาม", group: "reptile", wiki: "Thorny devil",
+      { name: "ปีศาจหนาม", group: "reptile", region: "oc", wiki: "Thorny devil",
         fact: "ผิวมีร่องเล็ก ๆ ที่ช่วยลำเลียงน้ำจากพื้นผิวไปยังปาก และมีหัวปลอมที่ท้ายทอยไว้หลอกศัตรู" },
-      { name: "กิ้งก่าคอระบาย", group: "reptile", wiki: "Frilled lizard",
+      { name: "กิ้งก่าคอระบาย", group: "reptile", region: "oc", wiki: "Frilled lizard",
         fact: "กางแผ่นหนังรอบคอออกเป็นพัดเมื่อตกใจ เพื่อทำให้ตัวดูใหญ่ขึ้น" },
-      { name: "กิ้งก่าบิน", group: "reptile", wiki: "Draco volans",
+      { name: "กิ้งก่าบิน", group: "reptile", region: "as", wiki: "Draco volans",
         fact: "ร่อนจากต้นไม้ต้นหนึ่งไปอีกต้นด้วยแผ่นหนังข้างลำตัว พบในเอเชียตะวันออกเฉียงใต้" },
-      { name: "จระเข้น้ำจืด", group: "reptile", wiki: "Siamese crocodile",
+      { name: "จระเข้น้ำจืด", group: "reptile", region: "oc", wiki: "Siamese crocodile",
         fact: "เคยพบในไทยตามแหล่งน้ำจืด ปัจจุบันใกล้สูญพันธุ์ขั้นวิกฤต" },
-      { name: "กบโกไลแอธ", group: "amphibian", wiki: "Goliath frog",
+      { name: "กบโกไลแอธ", group: "amphibian", region: "af", wiki: "Goliath frog",
         fact: "เป็นกบที่ใหญ่ที่สุดในโลก พบในประเทศแคเมอรูนและอิเควทอเรียลกินี" },
-      { name: "ซาลาแมนเดอร์ยักษ์จีน", group: "amphibian", wiki: "Chinese giant salamander",
+      { name: "ซาลาแมนเดอร์ยักษ์จีน", group: "amphibian", region: "as", wiki: "Chinese giant salamander",
         fact: "เป็นสัตว์สะเทินน้ำสะเทินบกที่ใหญ่ที่สุดในโลก ยาวได้เกือบ 2 เมตร" },
-      { name: "ซาลาแมนเดอร์ไฟ", group: "amphibian", wiki: "Fire salamander",
+      { name: "ซาลาแมนเดอร์ไฟ", group: "amphibian", region: "eu", wiki: "Fire salamander",
         fact: "ลายสีดำสลับเหลืองเป็นสัญญาณเตือนศัตรูว่าผิวหนังมีพิษ" },
-      { name: "กบแก้ว", group: "amphibian", wiki: "Glass frog",
+      { name: "กบแก้ว", group: "amphibian", region: "na sa", wiki: "Glass frog",
         fact: "ผิวหนังด้านท้องโปร่งใส จนมองเห็นหัวใจและอวัยวะภายในได้" },
-      { name: "ฉลามขาว", group: "fish", wiki: "Great white shark",
+      { name: "ฉลามขาว", group: "fish", region: "sea", wiki: "Great white shark",
         fact: "เป็นนักล่าระดับบนของทะเล และมีฟันใหม่งอกมาแทนฟันที่หลุดได้ตลอดชีวิต" },
-      { name: "กระเบนราหู", group: "fish", wiki: "Manta ray",
+      { name: "กระเบนราหู", group: "fish", region: "sea", wiki: "Manta ray",
         fact: "ปีกกางได้กว้างหลายเมตร กินแพลงก์ตอนเป็นอาหาร และเป็นปลาที่มีสมองใหญ่เมื่อเทียบกับปลาชนิดอื่น" },
-      { name: "ปลาไหลไฟฟ้า", group: "fish", wiki: "Electric eel",
+      { name: "ปลาไหลไฟฟ้า", group: "fish", region: "sa", wiki: "Electric eel",
         fact: "ปล่อยกระแสไฟฟ้าแรงสูงได้หลายร้อยโวลต์ ใช้ทั้งป้องกันตัวและจับเหยื่อ" },
-      { name: "ปลาปักเป้า", group: "fish", wiki: "Pufferfish",
+      { name: "ปลาปักเป้า", group: "fish", region: "sea as", wiki: "Pufferfish",
         fact: "พองตัวเป็นลูกกลมเมื่อถูกคุกคาม และหลายชนิดมีพิษร้ายแรงในร่างกาย" },
-      { name: "ปลาบึก", group: "fish", wiki: "Mekong giant catfish",
+      { name: "ปลาบึก", group: "fish", region: "as", wiki: "Mekong giant catfish",
         fact: "เป็นปลาน้ำจืดขนาดใหญ่ที่สุดชนิดหนึ่งของโลก พบในแม่น้ำโขง" },
-      { name: "ปลาเสือพ่นน้ำ", group: "fish", wiki: "Archerfish",
+      { name: "ปลาเสือพ่นน้ำ", group: "fish", region: "as oc", wiki: "Archerfish",
         fact: "พ่นน้ำเป็นลำใส่แมลงบนใบไม้ให้ตกลงมาแล้วจับกิน" },
-      { name: "ปลาพระอาทิตย์", group: "fish", wiki: "Ocean sunfish",
+      { name: "ปลาพระอาทิตย์", group: "fish", region: "sea", wiki: "Ocean sunfish",
         fact: "เป็นปลากระดูกแข็งที่หนักที่สุดชนิดหนึ่งในโลก ลำตัวแบนกลม และมักลอยตัวใกล้ผิวน้ำ" },
-      { name: "ปลาแองเกลอร์", group: "fish", wiki: "Anglerfish",
+      { name: "ปลาแองเกลอร์", group: "fish", region: "sea", wiki: "Anglerfish",
         fact: "อาศัยในทะเลลึก มีส่วนเรืองแสงห้อยอยู่หน้าหัวไว้ล่อเหยื่อให้เข้ามาใกล้" },
-      { name: "เต่าทอง", group: "invertebrate", wiki: "Coccinellidae",
+      { name: "เต่าทอง", group: "invertebrate", region: "world", wiki: "Coccinellidae",
         fact: "ลายจุดสีสดเป็นสัญญาณเตือนว่ารสไม่ดี และหลายชนิดกินเพลี้ยอ่อนที่เป็นศัตรูพืช" },
-      { name: "หิ่งห้อย", group: "invertebrate", wiki: "Firefly",
+      { name: "หิ่งห้อย", group: "invertebrate", region: "world", wiki: "Firefly",
         fact: "สร้างแสงเย็นจากปฏิกิริยาเคมีในตัว ใช้กะพริบสื่อสารกัน" },
-      { name: "ด้วงมูลสัตว์", group: "invertebrate", wiki: "Dung beetle",
+      { name: "ด้วงมูลสัตว์", group: "invertebrate", region: "world", wiki: "Dung beetle",
         fact: "กลิ้งก้อนมูลสัตว์ไปเป็นเส้นตรง โดยใช้แสงจากท้องฟ้า รวมถึงทางช้างเผือก ช่วยนำทาง" },
-      { name: "แมงป่อง", group: "invertebrate", wiki: "Scorpion",
+      { name: "แมงป่อง", group: "invertebrate", region: "world", wiki: "Scorpion",
         fact: "เรืองแสงสีฟ้าอมเขียวเมื่อส่องด้วยแสงอัลตราไวโอเลต" },
-      { name: "หมึกยักษ์ไจแอนต์สควิด", group: "invertebrate", wiki: "Giant squid",
+      { name: "หมึกยักษ์ไจแอนต์สควิด", group: "invertebrate", region: "sea", wiki: "Giant squid",
         fact: "อาศัยในทะเลลึก มีดวงตาใหญ่ที่สุดในบรรดาสัตว์ทั้งหมด" },
-      { name: "หอยงวงช้าง", group: "invertebrate", wiki: "Nautilus",
+      { name: "หอยงวงช้าง", group: "invertebrate", region: "sea", wiki: "Nautilus",
         fact: "มีเปลือกเป็นห้อง ๆ และปรับการลอยตัวด้วยก๊าซกับน้ำในห้องของเปลือก" },
-      { name: "ดาวทะเล", group: "invertebrate", wiki: "Starfish",
+      { name: "ดาวทะเล", group: "invertebrate", region: "sea", wiki: "Starfish",
         fact: "ไม่มีกระดูกสันหลังและงอกแขนที่ขาดไปกลับมาใหม่ได้" },
-      { name: "มดตัดใบไม้", group: "invertebrate", wiki: "Leafcutter ant",
+      { name: "มดตัดใบไม้", group: "invertebrate", region: "na sa", wiki: "Leafcutter ant",
         fact: "ตัดใบไม้ไปเพาะเชื้อราในรัง แล้วกินเชื้อรานั้นเป็นอาหาร" },
-      { name: "ตั๊กแตนตำข้าว", group: "invertebrate", wiki: "Mantis",
+      { name: "ตั๊กแตนตำข้าว", group: "invertebrate", region: "world", wiki: "Mantis",
         fact: "เป็นนักล่า มีขาหน้าจับเหยื่อ และหมุนหัวมองไปรอบ ๆ ได้" },
-      { name: "ปะการัง", group: "invertebrate", wiki: "Coral",
+      { name: "ปะการัง", group: "invertebrate", region: "sea", wiki: "Coral",
         fact: "เป็นสัตว์ อยู่รวมกันเป็นกลุ่มก้อน และสะสมหินปูนจนกลายเป็นแนวปะการัง" },
-      { name: "กวางเรนเดียร์", group: "mammal", wiki: "Reindeer",
+      { name: "กวางเรนเดียร์", group: "mammal", region: "na eu as", wiki: "Reindeer",
         fact: "เป็นกวางชนิดเดียวที่ทั้งตัวผู้และตัวเมียมีเขา และเดินทางอพยพไกลหลายร้อยกิโลเมตรในแต่ละปี" },
-      { name: "ตัวนิ่ม", group: "mammal", wiki: "Pangolin",
+      { name: "ตัวนิ่ม", group: "mammal", region: "as af", wiki: "Pangolin",
         fact: "เป็นสัตว์เลี้ยงลูกด้วยนมชนิดเดียวที่ตัวปกคลุมด้วยเกล็ด และม้วนตัวเป็นก้อนกลมเมื่อเจอภัย" },
-      { name: "นกหัวขวาน", group: "bird", wiki: "Woodpecker",
+      { name: "นกหัวขวาน", group: "bird", region: "world", wiki: "Woodpecker",
         fact: "เคาะลำต้นไม้เพื่อหาแมลง ลิ้นยาวมากและเก็บม้วนอยู่รอบกะโหลก ใช้ดึงแมลงออกจากโพรงไม้" },
-      { name: "เหยี่ยวเพเรกริน", group: "bird", wiki: "Peregrine falcon",
+      { name: "เหยี่ยวเพเรกริน", group: "bird", region: "world", wiki: "Peregrine falcon",
         fact: "เมื่อโฉบลงจับเหยื่อ ทำความเร็วได้เกิน 300 กิโลเมตรต่อชั่วโมง จัดเป็นสัตว์ที่เร็วที่สุดในโลก" },
-      { name: "ตะกวด", group: "reptile", wiki: "Water monitor",
+      { name: "ตะกวด", group: "reptile", region: "as", wiki: "Water monitor",
         fact: "เป็นตัวเงินตัวทองชนิดหนึ่ง ว่ายน้ำและปีนต้นไม้เก่ง พบได้ทั่วไปในประเทศไทย" },
-      { name: "เต่าดาวอินเดีย", group: "reptile", wiki: "Indian star tortoise",
+      { name: "เต่าดาวอินเดีย", group: "reptile", region: "as", wiki: "Indian star tortoise",
         fact: "กระดองมีลายรูปดาวแผ่ออกเป็นแฉก ช่วยพรางตัวท่ามกลางหญ้าและเงาไม้" },
-      { name: "คางคกอ้อย", group: "amphibian", wiki: "Cane toad",
+      { name: "คางคกอ้อย", group: "amphibian", region: "sa na oc", wiki: "Cane toad",
         fact: "ต่อมที่ผิวหนังปล่อยสารพิษป้องกันตัว ถูกนำเข้าไปออสเตรเลียเมื่อ พ.ศ. 2478 แล้วแพร่กระจายจนเป็นปัญหา" },
-      { name: "ซีซิเลียน", group: "amphibian", wiki: "Caecilian",
+      { name: "ซีซิเลียน", group: "amphibian", region: "as af sa", wiki: "Caecilian",
         fact: "เป็นสัตว์สะเทินน้ำสะเทินบกที่ไม่มีขา รูปร่างคล้ายไส้เดือนหรืองู ส่วนใหญ่ขุดดินอยู่ใต้ดิน" },
-      { name: "ปลาสิงโต", group: "fish", wiki: "Lionfish",
+      { name: "ปลาสิงโต", group: "fish", region: "sea", wiki: "Lionfish",
         fact: "มีครีบแผ่เป็นพวงและมีหนามพิษไว้ป้องกันตัว พบตามแนวปะการังในมหาสมุทรอินโดแปซิฟิก" },
-      { name: "ปลาปอด", group: "fish", wiki: "Lungfish",
+      { name: "ปลาปอด", group: "fish", region: "af sa oc", wiki: "Lungfish",
         fact: "มีปอดไว้หายใจเอาอากาศ บางชนิดฝังตัวในโคลนและจำศีลได้นานเมื่อน้ำแห้ง" },
-      { name: "หมึกกระดอง", group: "invertebrate", wiki: "Cuttlefish",
+      { name: "หมึกกระดอง", group: "invertebrate", region: "sea", wiki: "Cuttlefish",
         fact: "เปลี่ยนสีและลวดลายบนผิวได้รวดเร็วเพื่อพรางตัว และมีหัวใจ 3 ดวงเหมือนหมึกชนิดอื่น" },
-      { name: "แมงมุมกระโดด", group: "invertebrate", wiki: "Jumping spider",
-        fact: "ไม่ชักใยจับเหยื่อ แต่ใช้สายตาที่คมชัดเล็งแล้วกระโดดตะครุบ" }
+      { name: "แมงมุมกระโดด", group: "invertebrate", region: "world", wiki: "Jumping spider",
+        fact: "ไม่ชักใยจับเหยื่อ แต่ใช้สายตาที่คมชัดเล็งแล้วกระโดดตะครุบ" },
+      { name: "เสือจากัวร์", group: "mammal", region: "sa", wiki: "Jaguar",
+        fact: "กัดทะลุกะโหลกและกระดองเต่าได้ และชอบว่ายน้ำ" },
+      { name: "เสือดาวหิมะ", group: "mammal", region: "as", wiki: "Snow leopard",
+        fact: "หางยาวหนา ใช้พันตัวกันหนาวบนภูเขาสูง" },
+      { name: "จิ้งจอกฟีเนค", group: "mammal", region: "af", wiki: "Fennec fox",
+        fact: "หูใหญ่มาก ช่วยระบายความร้อนในทะเลทราย" },
+      { name: "ไฮยีนาลาย", group: "mammal", region: "af", wiki: "Spotted hyena",
+        fact: "ส่งเสียงคล้ายหัวเราะ และล่าเหยื่อเองได้เก่ง" },
+      { name: "ลีเมอร์หางวง", group: "mammal", region: "af", wiki: "Ring-tailed lemur",
+        fact: "พบเฉพาะที่เกาะมาดากัสการ์ หางมีลายวงสลับขาวดำ" },
+      { name: "แมวน้ำช้าง", group: "mammal", region: "sea", wiki: "Elephant seal",
+        fact: "ดำน้ำลึกได้เกินพันเมตร ตัวผู้มีจมูกยื่นคล้ายงวง" },
+      { name: "ตุ่นปากเป็ด", group: "mammal", region: "oc", wiki: "Platypus",
+        fact: "เป็นสัตว์เลี้ยงลูกด้วยนมที่วางไข่ ตัวผู้มีเดือยพิษที่ขาหลัง" },
+      { name: "อูฐหนอกเดียว", group: "mammal", region: "af as", wiki: "Dromedary",
+        fact: "หนอกเก็บไขมันไว้เป็นพลังงาน ทนร้อนและอดน้ำได้นาน" },
+      { name: "ลามะ", group: "mammal", region: "sa", wiki: "Llama",
+        fact: "ใช้บรรทุกของบนเทือกเขาแอนดีสมานานนับพันปี" },
+      { name: "อาร์มาดิลโล", group: "mammal", region: "na sa", wiki: "Armadillo",
+        fact: "มีเกราะแข็งคลุมตัว บางชนิดม้วนตัวเป็นลูกบอลได้" },
+      { name: "แรคคูน", group: "mammal", region: "na", wiki: "Raccoon",
+        fact: "ใช้มือหน้าคลำหาอาหารในน้ำ จนดูเหมือนกำลังล้างของ" },
+      { name: "บีเวอร์", group: "mammal", region: "na eu", wiki: "Beaver",
+        fact: "แทะต้นไม้สร้างเขื่อนจนเปลี่ยนทางน้ำได้" },
+      { name: "ไบซันอเมริกัน", group: "mammal", region: "na", wiki: "American bison",
+        fact: "เป็นสัตว์บกที่ใหญ่ที่สุดในอเมริกาเหนือ" },
+      { name: "มูส", group: "mammal", region: "na eu", wiki: "Moose",
+        fact: "เป็นกวางที่ตัวใหญ่ที่สุดในโลก" },
+      { name: "แมนดริล", group: "mammal", region: "af", wiki: "Mandrill",
+        fact: "เป็นลิงที่ตัวใหญ่ที่สุด หน้าและก้นมีสีสดใส" },
+      { name: "พะยูน", group: "mammal", region: "sea as oc", wiki: "Dugong",
+        fact: "กินหญ้าทะเลเป็นอาหาร พบในทะเลไทยด้วย" },
+      { name: "อาร์ดวาร์ก", group: "mammal", region: "af", wiki: "Aardvark",
+        fact: "กินมดและปลวกเป็นหลัก ลิ้นยาวมาก" },
+      { name: "แมวป่าหัวแบน", group: "mammal", region: "as", wiki: "Fishing cat",
+        fact: "ว่ายน้ำเก่งและจับปลากินเป็นอาหาร พบในไทยด้วย" },
+      { name: "หมีแว่น", group: "mammal", region: "sa", wiki: "Spectacled bear",
+        fact: "เป็นหมีชนิดเดียวในอเมริกาใต้ มีลายขาวรอบดวงตา" },
+      { name: "นกอินทรีทอง", group: "bird", region: "eu as na", wiki: "Golden eagle",
+        fact: "บินโฉบล่าเหยื่อด้วยสายตาที่คมกว่าคนหลายเท่า" },
+      { name: "นกแก้วคีอา", group: "bird", region: "oc", wiki: "Kea",
+        fact: "ฉลาดและช่างสงสัย พบเฉพาะบนภูเขาของนิวซีแลนด์" },
+      { name: "นกกระทุง", group: "bird", region: "world", wiki: "Pelican",
+        fact: "มีถุงใต้คางขนาดใหญ่ไว้ช้อนปลา" },
+      { name: "นกกาคาโป", group: "bird", region: "oc", wiki: "Kakapo",
+        fact: "เป็นนกแก้วที่บินไม่ได้ หากินกลางคืน และใกล้สูญพันธุ์" },
+      { name: "นกกระสาขาว", group: "bird", region: "eu af", wiki: "White stork",
+        fact: "ทำรังบนหลังคาและเสาสูง บินอพยพไกลไปแอฟริกา" },
+      { name: "แร้งแอนดีส", group: "bird", region: "sa", wiki: "Andean condor",
+        fact: "ปีกกางกว้างราว 3 เมตร ร่อนตามกระแสลมได้นาน" },
+      { name: "นกกาน้ำ", group: "bird", region: "world", wiki: "Cormorant",
+        fact: "ดำน้ำจับปลา แล้วกางปีกผึ่งให้แห้ง" },
+      { name: "นกนางแอ่นกินรัง", group: "bird", region: "as", wiki: "Edible-nest swiftlet",
+        fact: "ใช้น้ำลายสร้างรังที่นำมาทำรังนก" },
+      { name: "นกสวรรค์", group: "bird", region: "oc", wiki: "Birds-of-paradise",
+        fact: "ตัวผู้มีขนสวยงามและร่ายรำเกี้ยวตัวเมีย" },
+      { name: "นกกระจอกบ้าน", group: "bird", region: "world", wiki: "House sparrow",
+        fact: "อาศัยอยู่ใกล้ชุมชนมนุษย์ในหลายทวีป" },
+      { name: "นกแก้วแอฟริกันเกรย์", group: "bird", region: "af", wiki: "African grey parrot",
+        fact: "เลียนเสียงพูดได้เก่งมาก" },
+      { name: "งูหางกระดิ่ง", group: "reptile", region: "na sa", wiki: "Rattlesnake",
+        fact: "ปลายหางสั่นเป็นเสียงเตือนศัตรู" },
+      { name: "จระเข้ไนล์", group: "reptile", region: "af", wiki: "Nile crocodile",
+        fact: "เป็นจระเข้ที่ใหญ่เป็นอันดับสองรองจากจระเข้น้ำเค็ม" },
+      { name: "งูแมมบ้าดำ", group: "reptile", region: "af", wiki: "Black mamba",
+        fact: "เป็นงูพิษที่เลื้อยเร็วมากในแอฟริกา" },
+      { name: "เต่ากาลาปาโกส", group: "reptile", region: "sa", wiki: "Galápagos tortoise",
+        fact: "อาศัยบนหมู่เกาะกาลาปาโกส และมีอายุยืนมาก" },
+      { name: "อีกัวน่าทะเล", group: "reptile", region: "sa", wiki: "Marine iguana",
+        fact: "เป็นกิ้งก่าชนิดเดียวที่หากินในทะเล" },
+      { name: "ตุ๊กแก", group: "reptile", region: "as", wiki: "Tokay gecko",
+        fact: "เกาะผนังได้ด้วยแผ่นใต้นิ้วเท้า และร้องเสียงดัง" },
+      { name: "ตัวทูอาทารา", group: "reptile", region: "oc", wiki: "Tuatara",
+        fact: "เป็นญาติของสัตว์เลื้อยคลานโบราณ พบเฉพาะนิวซีแลนด์" },
+      { name: "เต่ามะเฟือง", group: "reptile", region: "sea", wiki: "Leatherback sea turtle",
+        fact: "เป็นเต่าทะเลที่ใหญ่ที่สุด กระดองเป็นหนังนุ่ม" },
+      { name: "มังกรเครา", group: "reptile", region: "oc", wiki: "Bearded dragon",
+        fact: "พองหนังใต้คางเป็นเคราเมื่อรู้สึกถูกคุกคาม" },
+      { name: "เฮลเบนเดอร์", group: "amphibian", region: "na", wiki: "Hellbender",
+        fact: "เป็นซาลาแมนเดอร์ยักษ์ หายใจผ่านผิวหนังที่เป็นรอยย่น" },
+      { name: "ซาลาแมนเดอร์ยักษ์ญี่ปุ่น", group: "amphibian", region: "as", wiki: "Japanese giant salamander",
+        fact: "ยาวได้ถึงราว 1.5 เมตร อาศัยในลำธารเย็น" },
+      { name: "กบพิษสีทอง", group: "amphibian", region: "sa", wiki: "Golden poison frog",
+        fact: "ผิวมีพิษร้ายแรงมาก พบในป่าฝนโคลอมเบีย" },
+      { name: "กบมะเขือเทศ", group: "amphibian", region: "af", wiki: "Tomato frog",
+        fact: "สีแดงสดเหมือนมะเขือเทศ พบเฉพาะที่มาดากัสการ์" },
+      { name: "อึ่งอ่าง", group: "amphibian", region: "as", wiki: "Banded bullfrog",
+        fact: "พองตัวเป็นลูกกลมเมื่อตกใจ พบในไทยด้วย" },
+      { name: "ฉลามหัวค้อน", group: "fish", region: "sea", wiki: "Hammerhead shark",
+        fact: "ตาอยู่ที่ปลายสองข้างของหัวที่แบนกว้าง" },
+      { name: "ทูน่าครีบน้ำเงิน", group: "fish", region: "sea", wiki: "Atlantic bluefin tuna",
+        fact: "ว่ายเร็วและข้ามมหาสมุทรได้" },
+      { name: "ปลาโอปาห์", group: "fish", region: "sea", wiki: "Opah",
+        fact: "เป็นปลาชนิดแรกที่พบว่าเลือดอุ่นทั้งตัว" },
+      { name: "ปลานกแก้ว", group: "fish", region: "sea", wiki: "Parrotfish",
+        fact: "ฟันเชื่อมเป็นจะงอย ใช้ขบปะการังกินสาหร่าย" },
+      { name: "ปลามังกร", group: "fish", region: "as", wiki: "Asian arowana",
+        fact: "เป็นปลาน้ำจืดสวยงามที่เป็นที่นิยมมาก" },
+      { name: "ปลาแซลมอน", group: "fish", region: "na eu", wiki: "Atlantic salmon",
+        fact: "ว่ายทวนน้ำกลับไปวางไข่ที่แหล่งที่เกิด" },
+      { name: "ปลาปิรันย่า", group: "fish", region: "sa", wiki: "Piranha",
+        fact: "ฟันคมเป็นรูปสามเหลี่ยม พบในแม่น้ำอเมริกาใต้" },
+      { name: "ปลาไหลมอเรย์", group: "fish", region: "sea", wiki: "Moray eel",
+        fact: "มีขากรรไกรที่สองอยู่ในลำคอ ช่วยดึงเหยื่อลงไป" },
+      { name: "ปลาแมนดาริน", group: "fish", region: "as oc", wiki: "Mandarinfish",
+        fact: "ลำตัวสีสดลายคล้ายเขาวงกต พบตามแนวปะการัง" },
+      { name: "ซีลาแคนท์", group: "fish", region: "af", wiki: "Coelacanth",
+        fact: "ได้ชื่อว่าเป็นฟอสซิลมีชีวิต" },
+      { name: "กั้งตั๊กแตน", group: "invertebrate", region: "sea as oc", wiki: "Mantis shrimp",
+        fact: "ใช้ก้ามต่อยเร็วมากจนทำให้เกิดฟองอากาศในน้ำ" },
+      { name: "ปูมะพร้าว", group: "invertebrate", region: "as oc", wiki: "Coconut crab",
+        fact: "เป็นสัตว์ขาปล้องบกที่ใหญ่ที่สุดในโลก" },
+      { name: "ผีเสื้อกลางคืนแอตลาส", group: "invertebrate", region: "as", wiki: "Atlas moth",
+        fact: "ปีกกางกว้างราว 25 เซนติเมตร" },
+      { name: "แมงกะพรุนอมตะ", group: "invertebrate", region: "sea", wiki: "Turritopsis dohrnii",
+        fact: "ย้อนกลับไปเป็นระยะวัยเด็กได้เมื่อเจอภาวะเครียด" },
+      { name: "แมงมุมทารันทูลา", group: "invertebrate", region: "na sa as", wiki: "Tarantula",
+        fact: "บางชนิดสะบัดขนระคายเคืองใส่ศัตรู" },
+      { name: "ปลวก", group: "invertebrate", region: "world", wiki: "Termite",
+        fact: "สร้างจอมปลวกสูงหลายเมตรได้" },
+      { name: "หอยมือเสือ", group: "invertebrate", region: "sea as oc", wiki: "Giant clam",
+        fact: "เป็นหอยสองฝาที่ใหญ่ที่สุดในโลก" },
+      { name: "ฟองน้ำ", group: "invertebrate", region: "sea", wiki: "Sponge",
+        fact: "เป็นสัตว์ที่ไม่มีอวัยวะและไม่มีสมอง" },
+      { name: "แมลงปอ", group: "invertebrate", region: "world", wiki: "Dragonfly",
+        fact: "บินร่อนและบินถอยหลังได้ มีตารวมขนาดใหญ่" },
+      { name: "ปูแมงมุมยักษ์ญี่ปุ่น", group: "invertebrate", region: "sea as", wiki: "Japanese spider crab",
+        fact: "ขาห่างกันได้กว่า 3 เมตร" },
+      { name: "ไส้เดือนดิน", group: "invertebrate", region: "world", wiki: "Earthworm",
+        fact: "ช่วยพรวนดินให้ร่วนซุยและอุดมสมบูรณ์" }
     ];
 
     // เรียงสัตว์ตามกลุ่ม (ลำดับเดียวกับ GROUPS) ไม่ว่าจะเพิ่มไว้ตรงไหนของรายการ
@@ -339,7 +473,12 @@
     ANIMALS.sort(function (a, b) { return groupOrder.indexOf(a.group) - groupOrder.indexOf(b.group); });
     document.getElementById("total").textContent = ANIMALS.length;
 
-    var state = { group: "all", q: "" };
+    var state = { group: "all", region: "all", q: "" };
+    var rchipsBox = document.getElementById("rchips");
+    rchipsBox.innerHTML = ["all"].concat(Object.keys(REGIONS)).map(function (k) {
+      return '<button class="chip" type="button" data-region="' + k + '" aria-pressed="' + (k === "all") + '">' + (k === "all" ? "ทุกภูมิภาค" : REGIONS[k]) + '</button>';
+    }).join("");
+    var rchips = rchipsBox.querySelectorAll(".chip");
     var list = document.getElementById("list");
     var chipsBox = document.getElementById("chips");
     var countEl = document.getElementById("count");
@@ -361,11 +500,12 @@
         'data-fallback="' + (a.fallback || "assets/placeholder.svg") +
         '" alt="' + (a.file ? 'ภาพถ่าย' + a.name : '') + '" width="500" height="625">';
       var key = a.file ? 'data-file="' + a.file + '"' : 'data-wiki="' + a.wiki + '"';
-      return '<article class="animal" ' + key + ' data-group="' + a.group + '" data-search="' + (a.name + " " + GROUPS[a.group]) + '">' +
+      return '<article class="animal" ' + key + ' data-group="' + a.group + '" data-region="' + a.region + '" data-region-label="' + regionText(a.region) + '" data-search="' + (a.name + " " + GROUPS[a.group] + " " + regionText(a.region)) + '">' +
         '<figure>' + img + '</figure>' +
         '<h3>' + a.name + '</h3>' +
         '<p class="kind">' + GROUPS[a.group] + '</p>' +
-        '<p>' + a.fact + '</p></article>';
+        '<p>' + a.fact + '</p>' +
+        '<p class="region">พบที่: ' + regionText(a.region) + '</p></article>';
     }).join("");
 
     // ถ้ารูปถ่ายโหลดไม่ได้ ให้ใช้ภาพสำรองแทน
@@ -421,11 +561,13 @@
       cards.forEach(function (card) {
         var okGroup = state.group === "all" || card.dataset.group === state.group;
         var okText = !q || card.dataset.search.toLowerCase().indexOf(q) !== -1;
-        var show = okGroup && okText;
+        var okRegion = state.region === "all" || (" " + card.dataset.region + " ").indexOf(" " + state.region + " ") !== -1;
+        var show = okGroup && okRegion && okText;
         card.hidden = !show;
         if (show) shown++;
       });
       chips.forEach(function (c) { c.setAttribute("aria-pressed", c.dataset.group === state.group ? "true" : "false"); });
+      rchips.forEach(function (c) { c.setAttribute("aria-pressed", c.dataset.region === state.region ? "true" : "false"); });
       countEl.textContent = "แสดง " + shown + " จาก " + cards.length + " ชนิด";
       emptyEl.hidden = shown !== 0;
     }
@@ -433,9 +575,12 @@
     chips.forEach(function (chip) {
       chip.addEventListener("click", function () { state.group = chip.dataset.group; apply(); });
     });
+    rchips.forEach(function (chip) {
+      chip.addEventListener("click", function () { state.region = chip.dataset.region; apply(); });
+    });
     input.addEventListener("input", function () { state.q = input.value; apply(); });
     document.getElementById("reset").addEventListener("click", function () {
-      state.group = "all"; state.q = ""; input.value = ""; apply(); input.focus();
+      state.group = "all"; state.region = "all"; state.q = ""; input.value = ""; apply(); input.focus();
     });
 
     apply();
