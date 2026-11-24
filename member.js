@@ -20,7 +20,7 @@
 
   // ถ้ายังต้องเปลี่ยนรหัสผ่าน ให้พาไปหน้าเปลี่ยนรหัสก่อนทุกหน้า
   var pending = window.Member.get();
-  if (pending && pending.mustChange && !/change-password\.html$/.test(location.pathname)) {
+  if (pending && pending.mustChange && !/(change|forgot|reset)-password\.html$/.test(location.pathname)) {
     location.replace("change-password.html");
   }
 
