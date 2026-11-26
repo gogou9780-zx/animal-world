@@ -1,21 +1,23 @@
 /* โลกสัตว์น่ารู้ — สไตล์ร่วมของทุกหน้า
    แนวคิด: หน้าต่างโค้ง (arch) เหมือนช่องส่องดูสัตว์ ใช้กับรูปถ่ายทุกใบ
-   สี: เขียวมอสเป็นพื้นฐาน เหลืองแดดเป็นจุดเน้นเดียว */
+   ธีม: คริสต์มาสนอร์ดิก (อบอุ่น มินิมอล) ครีม/ทราย + เขียวสน + แดงคริสต์มาสเป็นจุดเน้นเดียว
+   แก้สีทั้งเว็บได้ที่ตัวแปรใน :root ด้านล่าง (ชื่อ --sun เดิมตอนนี้คือสีแดงจุดเน้น) */
 
 :root {
-  --paper: #f5f8f3;
-  --white: #ffffff;
-  --ink: #16261d;
-  --muted: #4f6357;
-  --moss: #2d6a4f;
-  --moss-deep: #1f4d3a;
-  --leaf: #dcebdd;
-  --sun: #ffc94a;
-  --sun-deep: #f5b216;
-  --line: #dbe5db;
-  --field: #a9bbaf;
+  --paper: #FAF8F5;      /* พื้นหลังครีม */
+  --white: #FFFDFA;      /* การ์ด/ช่องกรอก (ขาวอมครีม) */
+  --ink: #24382d;        /* ตัวอักษรหลัก (เขียวเข้มเกือบดำ) */
+  --muted: #6B6156;      /* ตัวอักษรรอง (เข้มกว่า #8A7F72 เพื่อให้อ่านชัด) */
+  --taupe: #8A7F72;      /* เทาอบอุ่น ใช้กับเส้นขอบ/ไอคอน/ลายตกแต่ง */
+  --moss: #44705a;       /* เขียวสนอ่อน (hover) */
+  --moss-deep: #2F4F3E;  /* เขียวสนหลัก */
+  --leaf: #E8E1D7;       /* ทราย */
+  --sun: #B22222;        /* แดงคริสต์มาส (จุดเน้น) */
+  --sun-deep: #8E1A1A;   /* แดงเข้ม (hover) */
+  --line: #E8E1D7;
+  --field: #8A7F72;
   --error: #b42318;
-  --ok: #1f6f43;
+  --ok: #2F6B4A;
   --font-head: "Prompt", "Sarabun", system-ui, sans-serif;
   --font-body: "Sarabun", "Noto Sans Thai", system-ui, sans-serif;
 }
@@ -47,7 +49,7 @@ img { max-width: 100%; }
 /* ---------- ส่วนหัว ---------- */
 .site-header {
   position: sticky; top: 0; z-index: 10;
-  background: rgba(245, 248, 243, .94);
+  background: rgba(250, 248, 245, .94);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--line);
 }
@@ -83,7 +85,7 @@ img { max-width: 100%; }
   transition: background-color .15s, color .15s, border-color .15s;
 }
 .btn:disabled { opacity: .6; cursor: not-allowed; }
-.btn-sun { background: var(--sun); color: var(--ink); }
+.btn-sun { background: var(--sun); color: #fff; }
 .btn-sun:hover { background: var(--sun-deep); }
 .btn-line { border-color: var(--ink); color: var(--ink); background: transparent; }
 .btn-line:hover { background: var(--ink); color: #fff; }
@@ -145,7 +147,7 @@ img { max-width: 100%; }
 /* ---------- เรื่องน่ารู้ (ปุ่มสุ่ม) ---------- */
 .facts { padding: 8px 0 clamp(48px, 7vw, 88px); }
 .fact-panel {
-  background: var(--sun); border-radius: 36px;
+  background: var(--sun); color: #fff; border-radius: 36px;
   padding: clamp(28px, 5vw, 56px);
   display: grid; grid-template-columns: 1fr auto; gap: 28px; align-items: end;
 }
@@ -160,7 +162,7 @@ img { max-width: 100%; }
 .join { background: var(--moss-deep); color: #fff; padding: clamp(48px, 7vw, 80px) 0; }
 .join .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; }
 .join h2 { font-size: clamp(1.6rem, 3.4vw, 2.4rem); max-width: 18em; }
-.join p { margin-top: 8px; color: #d4e6da; }
+.join p { margin-top: 8px; color: #E8E1D7; }
 
 /* ---------- ท้ายหน้า ---------- */
 .site-footer { padding: 36px 0 48px; color: var(--muted); font-size: .95rem; }
@@ -205,7 +207,7 @@ img { max-width: 100%; }
   font-family: inherit; font-size: 1rem; color: var(--ink);
   background: var(--white); border: 1.5px solid var(--field); border-radius: 12px;
 }
-.field input:focus, .field select:focus { border-color: var(--moss); outline: 3px solid rgba(45, 106, 79, .25); outline-offset: 0; }
+.field input:focus, .field select:focus { border-color: var(--moss); outline: 3px solid rgba(47, 79, 62, .25); outline-offset: 0; }
 .field input[aria-invalid="true"] { border-color: var(--error); }
 .err { min-height: 1.4em; margin-top: 4px; color: var(--error); font-size: .95rem; }
 .hp { position: absolute; left: -9999px; height: 0; overflow: hidden; }
@@ -240,7 +242,7 @@ img { max-width: 100%; }
   font-family: inherit; font-size: 1rem; color: var(--ink);
   background: var(--white); border: 1.5px solid var(--field); border-radius: 999px;
 }
-.search input:focus { border-color: var(--moss); outline: 3px solid rgba(45, 106, 79, .25); outline-offset: 0; }
+.search input:focus { border-color: var(--moss); outline: 3px solid rgba(47, 79, 62, .25); outline-offset: 0; }
 .toolbar .chips { margin-top: 0; }
 .count { margin-top: 20px; color: var(--muted); }
 .animal-grid { margin-top: 24px; }
@@ -297,7 +299,7 @@ img { max-width: 100%; }
   border: 1.5px solid var(--field); border-radius: 14px; background: var(--white); cursor: pointer;
 }
 .q-option input { width: 20px; height: 20px; accent-color: var(--moss-deep); flex: none; }
-.q-option.correct label { border-color: var(--ok); background: #e7f4ec; }
+.q-option.correct label { border-color: var(--ok); background: #e9efe9; }
 .q-option.wrong label { border-color: var(--error); background: #fdeceb; }
 .q-feedback { margin-top: 16px; min-height: 1.8em; font-weight: 600; }
 .q-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }

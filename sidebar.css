@@ -34,16 +34,16 @@ body.sb-lock { overflow: hidden; }
   width: 44px; height: 44px; border: 0; border-radius: 50%; background: var(--leaf, #e3f0e0);
   font-size: 1.6rem; line-height: 1; color: inherit; cursor: pointer;
 }
-.sb-close:hover { background: var(--sun, #ffc94a); }
+.sb-close:hover { background: var(--sun, #B22222); color: #fff; }
 
 .sb-user {
   display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 22px; color: #fff;
-  background: linear-gradient(135deg, var(--moss-deep, #1f4d3a), #2f7458);
+  background: linear-gradient(135deg, var(--moss-deep, #1f4d3a), #3f6652);
 }
 .sb-user[hidden] { display: none; }
 .sb-ava {
   display: grid; place-items: center; flex: none; width: 48px; height: 56px; border-radius: 999px 999px 12px 12px;
-  background: var(--sun, #ffc94a); color: var(--ink, #16261d); font-family: var(--font-head, inherit); font-weight: 700; font-size: 1.3rem;
+  background: var(--sun, #B22222); color: #fff; font-family: var(--font-head, inherit); font-weight: 700; font-size: 1.3rem;
 }
 .sb-user p { margin: 0; min-width: 0; overflow-wrap: anywhere; }
 .sb-user .sb-name { font-weight: 600; }
@@ -58,11 +58,11 @@ body.sb-lock { overflow: hidden; }
   transition: background-color .2s, padding-left .25s var(--ease, ease);
 }
 .sb-links a:hover { background: var(--leaf, #e3f0e0); padding-left: 20px; }
-.sb-links a[aria-current="page"] { background: var(--sun, #ffc94a); }
+.sb-links a[aria-current="page"] { background: var(--sun, #B22222); color: #fff; }
 .sb-links svg { width: 22px; height: 22px; flex: none; color: var(--moss, #2d6a4f); }
-.sb-links a[aria-current="page"] svg { color: var(--ink, #16261d); }
+.sb-links a[aria-current="page"] svg { color: #fff; }
 
-.sb-fact { padding: 16px; border-radius: 22px; background: linear-gradient(135deg, #fff4cf, #ffe9a8); }
+.sb-fact { padding: 16px; border-radius: 22px; background: linear-gradient(135deg, #f6f0e6, #E8E1D7); }
 .sb-fact h2 { margin: 0 0 6px; font-family: var(--font-head, inherit); font-size: 1rem; color: var(--moss-deep, #1f4d3a); }
 .sb-fact p { margin: 0 0 10px; line-height: 1.7; }
 .sb-fact button {

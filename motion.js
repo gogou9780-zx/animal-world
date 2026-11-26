@@ -136,7 +136,7 @@
   // ---------- confetti ----------
   function burst(x, y) {
     if (reduce || !Element.prototype.animate) return;
-    var colors = ["#ffc94a", "#2d6a4f", "#9fcf8a", "#f5b216", "#1f4d3a"];
+    var colors = ["#B22222", "#2F4F3E", "#E8E1D7", "#8A7F72", "#d46a6a"];
     for (var i = 0; i < 36; i++) {
       (function (i) {
         var p = doc.createElement("i");

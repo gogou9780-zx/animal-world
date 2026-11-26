@@ -10,34 +10,40 @@
     var narrow = !!doc.querySelector("main.quiz"); // หน้าแบบทดสอบมีเนื้อหาแคบกว่าหน้าอื่น
     if (narrow) doc.body.classList.add("g-narrow");
 
-    var PAW = '<svg viewBox="0 0 48 48" aria-hidden="true"><ellipse cx="24" cy="31" rx="10" ry="8.5"/><ellipse cx="9" cy="22" rx="4.2" ry="5.6" transform="rotate(-20 9 22)"/><ellipse cx="18" cy="12" rx="4.2" ry="5.8" transform="rotate(-6 18 12)"/><ellipse cx="30" cy="12" rx="4.2" ry="5.8" transform="rotate(6 30 12)"/><ellipse cx="39" cy="22" rx="4.2" ry="5.6" transform="rotate(20 39 22)"/></svg>';
-    var LEAF = '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M10 44C4 28 12 10 36 4c4 20-4 36-26 40z"/><path d="M12 42C18 30 24 20 32 10"/></svg>';
+    var SNOW = '<svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M24 4v40M7 14l34 20M41 14L7 34"/><path d="M19 8l5 5 5-5M19 40l5-5 5 5"/></g></svg>';
+    var SPRIG = '<svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M24 44V6"/><path d="M24 16L12 8M24 16l12-8M24 26L10 18M24 26l14-8M24 36L12 28M24 36l12-8"/></g></svg>';
+    var BERRY = '<svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="16" cy="29" r="7"/><circle cx="31" cy="25" r="7"/><circle cx="23" cy="13" r="7"/></svg>';
 
     var deco = doc.createElement("div");
     deco.className = "g-deco g-on";
     deco.setAttribute("aria-hidden", "true");
 
-    // ซ้าย: ทางเดินรอยเท้า (เดินลง สลับซ้ายขวา)
+    // ซ้าย: ลูกบอลห้อยจากแถบหัว (สีแดง เขียว ทราย)
+    var strings = [
+      { x: 22, len: 15, c: "#B22222", bs: 30, sw: 6.2, d: 0,    sm: "#2F4F3E" },
+      { x: 58, len: 31, c: "#2F4F3E", bs: 34, sw: 7.4, d: -2.1, sm: "#B22222" },
+      { x: 92, len: 22, c: "#E8E1D7", bs: 28, sw: 5.6, d: -3.7, sm: "#8A7F72" },
+      { x: 40, len: 52, c: "#B22222", bs: 26, sw: 6.8, d: -1.2, sm: "#E8E1D7" }
+    ];
     var left = '<div class="g-l">';
-    for (var i = 0; i < 12; i++) {
-      var side = i % 2;
-      left += '<span class="paw' + (i % 5 === 4 ? " sun" : "") + '" style="top:' + (i * 8.2 + 2) + '%;left:' + (side ? 54 : 14) +
-        'px;--r:' + (180 + (side ? 14 : -14)) + 'deg;--d:' + (i * 0.6).toFixed(1) + 's">' + PAW + "</span>";
-    }
+    strings.forEach(function (o) {
+      left += '<span class="orn" style="left:' + o.x + "px;--len:" + o.len + "vh;--c:" + o.c + ";--bs:" + o.bs + "px;--sw:" + o.sw + "s;--d:" + o.d + 's">' +
+        '<i class="bau sm" style="--c:' + o.sm + '"></i><i class="bau"></i></span>';
+    });
     left += "</div>";
 
-    // ขวา: ใบไม้ปลิว
+    // ขวา: เกล็ดหิมะ กิ่งสน เบอร์รี ปลิวลงช้า ๆ
     var cfg = [
-      { x: 10, s: 30, t: 30, d: 0,   c: "#2d6a4f" },
-      { x: 62, s: 24, t: 36, d: -9,  c: "#9fcf8a" },
-      { x: 34, s: 34, t: 26, d: -17, c: "#f5b216" },
-      { x: 80, s: 22, t: 40, d: -24, c: "#2d6a4f" },
-      { x: 48, s: 28, t: 33, d: -5,  c: "#9fcf8a" },
-      { x: 18, s: 20, t: 38, d: -28, c: "#f5b216" }
+      { x: 10, s: 30, t: 30, d: 0,   c: "#8A7F72", g: SNOW },
+      { x: 62, s: 26, t: 36, d: -9,  c: "#2F4F3E", g: SPRIG },
+      { x: 34, s: 24, t: 26, d: -17, c: "#B22222", g: BERRY },
+      { x: 80, s: 22, t: 40, d: -24, c: "#8A7F72", g: SNOW },
+      { x: 48, s: 28, t: 33, d: -5,  c: "#2F4F3E", g: SPRIG },
+      { x: 18, s: 22, t: 38, d: -28, c: "#B22222", g: BERRY }
     ];
     var right = '<div class="g-r">';
     cfg.forEach(function (c, n) {
-      right += '<span class="leaf" style="left:' + c.x + "px;--s:" + c.s + "px;--t:" + c.t + "s;--d:" + c.d + "s;--c:" + c.c + ";--y:" + (14 + n * 15) + '">' + LEAF + "</span>";
+      right += '<span class="leaf" style="left:' + c.x + "px;--s:" + c.s + "px;--t:" + c.t + "s;--d:" + c.d + "s;--c:" + c.c + ";--y:" + (14 + n * 15) + '">' + c.g + "</span>";
     });
     right += "</div>";
     deco.innerHTML = left + right;

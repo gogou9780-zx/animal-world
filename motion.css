@@ -31,12 +31,12 @@ body { animation: pageIn .6s ease-out both; }
 /* ---------- ส่วนหัว ---------- */
 .site-header { transition: box-shadow .3s, background-color .3s; }
 .site-header .wrap { transition: min-height .3s var(--ease); }
-.site-header.scrolled { box-shadow: 0 10px 26px -14px rgba(22, 38, 29, .35); background: rgba(245, 248, 243, .98); }
+.site-header.scrolled { box-shadow: 0 10px 26px -14px rgba(22, 38, 29, .35); background: rgba(250, 248, 245, .98); }
 .site-header.scrolled .wrap { min-height: 58px; }
 .brand:hover .brand-mark { animation: wiggle .6s; }
 .nav a { transition: background-color .2s, color .2s, transform .25s var(--ease), box-shadow .25s; }
 .nav a:hover { transform: translateY(-2px); }
-.nav a.nav-cta:hover { box-shadow: 0 8px 18px -8px rgba(31, 77, 58, .7); }
+.nav a.nav-cta:hover { box-shadow: 0 8px 18px -8px rgba(47, 79, 62, .7); }
 
 /* ---------- ปุ่ม ---------- */
 .btn {
@@ -56,7 +56,7 @@ body { animation: pageIn .6s ease-out both; }
   background: rgba(255, 255, 255, .5); transform: scale(0);
   animation: ripple .6s ease-out forwards;
 }
-.btn-line .ripple { background: rgba(45, 106, 79, .25); }
+.btn-line .ripple { background: rgba(47, 79, 62, .25); }
 @keyframes ripple { to { transform: scale(2.6); opacity: 0; } }
 
 /* ---------- หน้าแรก: ส่วนเปิด ---------- */
@@ -65,8 +65,8 @@ body { animation: pageIn .6s ease-out both; }
   content: ""; position: absolute; border-radius: 50%; filter: blur(60px);
   opacity: .55; z-index: 0; pointer-events: none;
 }
-.hero::before { width: 420px; height: 420px; background: #cfe6d2; left: -120px; top: -100px; animation: drift 16s ease-in-out infinite alternate; }
-.hero::after { width: 360px; height: 360px; background: #ffe9a8; right: -80px; bottom: -60px; animation: drift 20s ease-in-out infinite alternate-reverse; }
+.hero::before { width: 420px; height: 420px; background: #E8E1D7; left: -120px; top: -100px; animation: drift 16s ease-in-out infinite alternate; }
+.hero::after { width: 360px; height: 360px; background: #f2d5d0; right: -80px; bottom: -60px; animation: drift 20s ease-in-out infinite alternate-reverse; }
 .hero .wrap { position: relative; z-index: 1; }
 
 .hero h1, .hero .lead, .hero-actions { animation: rise .8s var(--ease) both; }
@@ -75,7 +75,7 @@ body { animation: pageIn .6s ease-out both; }
 
 /* ภาพในส่วนเปิด: ลอยเบา ๆ และขยับตามเมาส์ (translate แยกจาก transform) */
 @keyframes float { 50% { transform: translateY(-12px); } }
-@keyframes sunPulse { 50% { transform: scale(1.1); box-shadow: 0 0 0 18px rgba(255, 201, 74, .25); } }
+@keyframes sunPulse { 50% { transform: scale(1.1); box-shadow: 0 0 0 18px rgba(178, 34, 34, .22); } }
 .art .p-main  { --depth: 10;  animation: reveal .8s ease-out both, float 7s ease-in-out 1s infinite; }
 .art .p-round { --depth: -18; animation: reveal .8s ease-out .15s both, float 6s ease-in-out 1.2s infinite reverse; }
 .art .p-small { --depth: 22;  animation: reveal .8s ease-out .3s both, float 8s ease-in-out 1.4s infinite; }
@@ -89,7 +89,7 @@ body { animation: pageIn .6s ease-out both; }
 /* ---------- การ์ดสัตว์ ---------- */
 .animal figure {
   position: relative;
-  background: linear-gradient(100deg, var(--leaf) 30%, #eef6ee 50%, var(--leaf) 70%);
+  background: linear-gradient(100deg, var(--leaf) 30%, #f3eee7 50%, var(--leaf) 70%);
   background-size: 200% 100%; animation: shimmer 1.6s linear infinite;
   transition: transform .25s ease-out, translate .5s var(--ease), box-shadow .5s var(--ease);
   will-change: transform;
@@ -113,17 +113,17 @@ body { animation: pageIn .6s ease-out both; }
 .chip[aria-pressed="true"] { animation: chipPop .4s var(--ease); }
 @keyframes chipPop { 40% { transform: scale(1.1); } }
 .search input { transition: border-color .2s, box-shadow .2s, max-width .4s var(--ease); }
-.search input:focus { max-width: 540px; box-shadow: 0 10px 22px -14px rgba(45, 106, 79, .6); }
+.search input:focus { max-width: 540px; box-shadow: 0 10px 22px -14px rgba(47, 79, 62, .6); }
 
 /* ---------- รู้หรือไม่ ---------- */
 .fact-panel {
   position: relative; overflow: hidden;
-  background: linear-gradient(120deg, #ffc94a, #ffdc82, #ffc94a); background-size: 200% 200%;
+  background: linear-gradient(120deg, #B22222, #c13838, #B22222); background-size: 200% 200%;
   animation: gradMove 10s ease-in-out infinite;
 }
 .fact-panel::before {
   content: ""; position: absolute; right: -60px; top: -70px; width: 240px; height: 240px;
-  border-radius: 50%; background: rgba(255, 255, 255, .3); pointer-events: none;
+  border-radius: 50%; background: rgba(255, 255, 255, .1); pointer-events: none;
   animation: drift 12s ease-in-out infinite alternate;
 }
 .fact-panel > * { position: relative; }
@@ -133,12 +133,12 @@ body { animation: pageIn .6s ease-out both; }
 /* ---------- ชวนสมัคร ---------- */
 .join {
   position: relative; overflow: hidden;
-  background: linear-gradient(120deg, var(--moss-deep), #2b6a50, var(--moss-deep)); background-size: 200% 100%;
+  background: linear-gradient(120deg, var(--moss-deep), #3a6350, var(--moss-deep)); background-size: 200% 100%;
   animation: gradMove 14s ease-in-out infinite;
 }
 .join::after {
   content: ""; position: absolute; right: 6%; top: -60px; width: 200px; height: 200px; border-radius: 50%;
-  background: rgba(255, 201, 74, .18); pointer-events: none; animation: drift 14s ease-in-out infinite alternate;
+  background: rgba(232, 225, 215, .08); pointer-events: none; animation: drift 14s ease-in-out infinite alternate;
 }
 .join .wrap { position: relative; z-index: 1; }
 
@@ -148,7 +148,7 @@ body { animation: pageIn .6s ease-out both; }
 .field label { transition: color .2s; }
 .field:focus-within label { color: var(--moss); }
 .field input, .field select { transition: border-color .2s, box-shadow .2s, transform .2s var(--ease); }
-.field input:focus, .field select:focus { transform: translateY(-1px); box-shadow: 0 10px 20px -14px rgba(45, 106, 79, .7); }
+.field input:focus, .field select:focus { transform: translateY(-1px); box-shadow: 0 10px 20px -14px rgba(47, 79, 62, .7); }
 .field input[aria-invalid="true"] { animation: shake .4s; }
 .banner.show { animation: rise .35s var(--ease); }
 .consent { cursor: pointer; }
@@ -173,7 +173,7 @@ body { animation: pageIn .6s ease-out both; }
 .daily { position: relative; overflow: hidden; }
 .daily::after {
   content: ""; position: absolute; right: -40px; bottom: -50px; width: 180px; height: 180px; border-radius: 50%;
-  background: rgba(255, 201, 74, .35); pointer-events: none;
+  background: rgba(178, 34, 34, .09); pointer-events: none;
 }
 .daily > * { position: relative; z-index: 1; }
 
@@ -193,7 +193,7 @@ body { animation: pageIn .6s ease-out both; }
 .q-option:has(input:checked) label { border-color: var(--moss-deep); background: var(--leaf); }
 .q-option.correct label { animation: correctPop .55s var(--ease); }
 .q-option.wrong label { animation: shake .45s; }
-@keyframes correctPop { 40% { transform: scale(1.04); box-shadow: 0 0 0 6px rgba(31, 111, 67, .2); } }
+@keyframes correctPop { 40% { transform: scale(1.04); box-shadow: 0 0 0 6px rgba(47, 79, 62, .2); } }
 .score { animation: badgePop .9s cubic-bezier(.34, 1.56, .64, 1) both; }
 
 /* ---------- confetti ---------- */
