@@ -1,92 +1,50 @@
-/* โลกสัตว์น่ารู้ — ของตกแต่งธีมคริสต์มาสนอร์ดิก (โหลดเป็นไฟล์สุดท้าย)
-   พาเลตต์: ครีม #FAF8F5 · ทราย #E8E1D7 · แดง #B22222 · เขียวสน #2F4F3E · เทาอบอุ่น #8A7F72
-   อยากปิดของตกแต่งทั้งหมด: ลบลิงก์ xmas.css และ xmas.js ออกจากหน้า HTML (สีธีมยังอยู่ใน style.css) */
-
-/* ---------- พวงมาลัยห้อยใต้แถบหัว ---------- */
-.site-header::after {
-  content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 36px; pointer-events: none;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='36' viewBox='0 0 120 36'%3E%3Cpath d='M0 2Q60 40 120 2' fill='none' stroke='%232F4F3E' stroke-width='3' stroke-linecap='round'/%3E%3Cg stroke='%232F4F3E' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M8 7l-2 4M22 13l-3 4M38 18l-3 4M52 21l-2 4M68 21l2 4M82 18l3 4M98 13l3 4M112 7l2 4'/%3E%3C/g%3E%3Cg stroke='%238A7F72' stroke-width='1' opacity='.7'%3E%3Cpath d='M30 16v4M90 16v4M60 21v4'/%3E%3C/g%3E%3Ccircle cx='30' cy='24' r='4' fill='%23B22222'/%3E%3Ccircle cx='90' cy='24' r='4' fill='%23B22222'/%3E%3Ccircle cx='60' cy='29.5' r='4.6' fill='%23E8E1D7' stroke='%238A7F72' stroke-width='1'/%3E%3C/svg%3E") repeat-x 0 0 / 120px 36px;
-}
-
-/* ---------- หมวกซานต้าบนโลโก้ ---------- */
-.brand-mark { position: relative; background: var(--moss-deep); }
-.brand-mark::before {
-  content: ""; position: absolute; left: -7px; top: -11px; width: 38px; height: 20px; transform: rotate(-8deg);
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 38 20'%3E%3Cpath d='M4 17C8 5 19 1 31 7c2 1 3 3 3 6z' fill='%23B22222'/%3E%3Crect x='1' y='14' width='36' height='5.5' rx='2.7' fill='%23FFFDFA' stroke='%238A7F72' stroke-opacity='.55'/%3E%3Ccircle cx='32' cy='6.5' r='3.8' fill='%23FFFDFA' stroke='%238A7F72' stroke-opacity='.55'/%3E%3C/svg%3E") center / contain no-repeat;
-}
-
-/* ---------- ตัวอักษรบนพื้นแดง ---------- */
-dialog.ad .ad-kind { color: #fff; }
-.fact-panel .btn-ink:hover { background: #fff; color: var(--sun); }
-
-/* ---------- หัวข้อส่วน: จุดสามสีแบบนอร์ดิก ---------- */
-.section-head h2::after, .page-title::after {
-  content: ""; display: block; width: 62px; height: 9px; margin-top: 14px;
-  background:
-    radial-gradient(circle at 5px 4.5px, #B22222 4px, transparent 4.5px),
-    radial-gradient(circle at 31px 4.5px, #2F4F3E 4px, transparent 4.5px),
-    radial-gradient(circle at 57px 4.5px, #8A7F72 4px, transparent 4.5px);
-}
-.perks li::before { box-shadow: 0 0 0 4px rgba(178, 34, 34, .14); }
-
-/* ---------- ลูกบอลคริสต์มาสแทนวงกลมสีแดงในหน้าแรก ---------- */
-.art .sun {
-  background: radial-gradient(circle at 32% 28%, rgba(255, 255, 255, .5) 0 10%, transparent 11%), var(--sun);
-  box-shadow: inset -8px -10px 18px -8px rgba(0, 0, 0, .25);
-}
-.art .sun::before { content: ""; position: absolute; left: 50%; top: -8%; width: 26%; height: 12%; margin-left: -13%; border-radius: 4px 4px 2px 2px; background: var(--taupe); }
-.art .sun::after { content: ""; position: absolute; left: 50%; bottom: calc(100% + 6px); width: 1.5px; height: 140px; background: var(--taupe); opacity: .55; }
-
-/* ---------- หมวกหิมะบนกรอบภาพโค้ง ---------- */
-.animal figure::after, .reg-side figure::after {
-  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 30px; pointer-events: none; z-index: 2;
-  background:
-    radial-gradient(circle at 12% 9px, #fff 11px, transparent 12px),
-    radial-gradient(circle at 36% 7px, #fff 9px, transparent 10px),
-    radial-gradient(circle at 62% 11px, #fff 12px, transparent 13px),
-    radial-gradient(circle at 88% 8px, #fff 9px, transparent 10px),
-    linear-gradient(#fff, #fff) top / 100% 9px no-repeat;
-  opacity: .96;
-}
-.reg-side figure { position: relative; }
-
-/* ---------- แผง "รู้หรือไม่" สีแดงมีหิมะ ---------- */
-.fact-panel::after {
-  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
-  background:
-    radial-gradient(circle, rgba(255, 255, 255, .34) 2px, transparent 2.6px) 0 0 / 46px 46px,
-    radial-gradient(circle, rgba(255, 255, 255, .2) 1.5px, transparent 2px) 23px 23px / 46px 46px;
-  -webkit-mask-image: linear-gradient(90deg, transparent 30%, #000); mask-image: linear-gradient(90deg, transparent 30%, #000);
-}
-.fact-panel > * { z-index: 1; }
-
-/* ---------- แถบริบบิ้นลายทางบนส่วนชวนสมัคร ---------- */
-.join::before {
-  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 9px; z-index: 1;
-  background: repeating-linear-gradient(135deg, #B22222 0 11px, #FAF8F5 11px 22px);
-}
-.daily { border-color: var(--line); }
-
-/* ---------- ท้ายหน้า: แถวต้นสน ---------- */
-.site-footer::before {
-  content: ""; display: block; height: 36px; margin-bottom: 22px;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='36' viewBox='0 0 96 36'%3E%3Cg fill='%232F4F3E'%3E%3Cpath d='M22 3L31 14H26L34 24H28L36 33H8L16 24H10L18 14H13Z'/%3E%3Cpath transform='translate(48 8) scale(.8)' d='M22 3L31 14H26L34 24H28L36 33H8L16 24H10L18 14H13Z'/%3E%3C/g%3E%3Cg fill='%23B22222'%3E%3Ccircle cx='22' cy='3' r='2.4'/%3E%3Ccircle cx='65.6' cy='8.4' r='2'/%3E%3Ccircle cx='18' cy='22' r='1.6'/%3E%3Ccircle cx='27' cy='29' r='1.6'/%3E%3C/g%3E%3Crect y='33.5' width='96' height='2.5' fill='%23E8E1D7'/%3E%3C/svg%3E") repeat-x bottom / 96px 36px;
-}
-.site-footer .copy::after { content: " · สุขสันต์วันคริสต์มาสและสวัสดีปีใหม่"; color: var(--sun); }
-
-/* ---------- หิมะตกอยู่หลังเนื้อหา ---------- */
-.xs-snow { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
-.xs-snow i {
-  position: absolute; top: -12px; left: var(--x); width: var(--s); height: var(--s); border-radius: 50%; opacity: var(--o);
-  background: #E8E1D7; box-shadow: 0 0 0 1px rgba(138, 127, 114, .25);
-  animation: xsFall var(--t) linear infinite; animation-delay: var(--d);
-}
-.xs-snow i.red { background: #B22222; box-shadow: none; }
-@keyframes xsFall { to { transform: translate3d(var(--dx), 108vh, 0); } }
-
-@media (max-width: 560px) {
-  .site-header::after { background-size: 90px 27px; height: 27px; }
-  .art .sun::after { height: 70px; }
-}
-@media (prefers-reduced-motion: reduce) { .xs-snow { display: none; } }
-@media print { .site-header::after, .xs-snow, .site-footer::before { display: none !important; } }
+/* CHRISTMAS WONDERLAND — premium festive layer, additive only */
+:root { --xmas-gold:#d6b56b; --xmas-red:#8f1424; --xmas-red2:#bd2636; --xmas-green:#123d2b; --xmas-green2:#20553b; --xmas-snow:#fffdf8; }
+body { background: radial-gradient(ellipse at 12% 0%,rgba(194,35,52,.08),transparent 32%),radial-gradient(ellipse at 88% 12%,rgba(30,94,60,.12),transparent 34%),linear-gradient(180deg,#fffaf2 0%,#f5f0e8 45%,#fffaf5 100%); }
+.site-header { background:linear-gradient(110deg,rgba(15,55,39,.97),rgba(23,71,48,.96)); border-bottom:1px solid rgba(214,181,107,.65); box-shadow:0 8px 30px rgba(12,43,29,.18); }
+.site-header .wrap { min-height:76px; }
+.brand,.site-header .nav a { color:#fffdf5; }
+.brand-mark { box-shadow:0 0 0 2px rgba(214,181,107,.7),0 0 22px rgba(214,181,107,.28); }
+.nav a:hover,.nav a[aria-current="page"] { background:rgba(255,255,255,.14); }
+.nav a.nav-cta { background:linear-gradient(135deg,#b52535,#8e1424); border:1px solid #e5c782; box-shadow:0 5px 16px rgba(0,0,0,.16); }
+.site-header::before { content:""; position:absolute; inset:0 0 auto;height:4px;background:linear-gradient(90deg,#b51f32,#d9bd78,#fff5d8,#d9bd78,#b51f32); }
+.site-header::after { height:42px; opacity:.95; filter:drop-shadow(0 3px 3px rgba(0,0,0,.15)); }
+.hero { position:relative; overflow:hidden; }
+.hero::before { content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 8% 16%,rgba(255,255,255,.8),transparent 22%),radial-gradient(circle at 82% 8%,rgba(214,181,107,.14),transparent 25%); }
+.hero h1,.page-title,.quiz-title,.member h1 { color:var(--xmas-green); text-shadow:0 1px 0 #fff,0 5px 18px rgba(26,70,47,.09); }
+.hero .lead { max-width:58ch; }
+.btn { box-shadow:0 5px 14px rgba(21,54,38,.09); transition:transform .22s ease,box-shadow .22s ease,background .22s ease; }
+.btn:hover { transform:translateY(-3px);box-shadow:0 10px 24px rgba(21,54,38,.17); }
+.btn-sun,.btn-ink,.btn-moss { background:linear-gradient(135deg,#a91f31,#7e1322);border-color:#d6b56b;color:white; }
+.btn-sun:hover,.btn-ink:hover,.btn-moss:hover { background:linear-gradient(135deg,#c33242,#9b1b2c); }
+.btn-line { border-color:var(--xmas-green); color:var(--xmas-green);background:rgba(255,255,255,.6); }
+.btn-line:hover { background:var(--xmas-green);color:white; }
+.gallery,.member,.quiz,.reg,.login,.forgot,.reset,.change { position:relative; }
+.animal,.fact-panel,.daily,.menu-item a,.q-option label,.reg-card,.auth-card,.panel,.card,.quiz-card { border-color:rgba(183,151,82,.35)!important; box-shadow:0 12px 32px rgba(31,66,45,.08),inset 0 1px 0 rgba(255,255,255,.7); }
+.animal { background:linear-gradient(145deg,#fffdf9,#f7f1e7); transition:transform .25s ease,box-shadow .25s ease; }
+.animal:hover { transform:translateY(-6px);box-shadow:0 18px 38px rgba(31,66,45,.14); }
+.animal h3 { color:#8f1424; }
+.animal figure,.reg-side figure { box-shadow:0 10px 28px rgba(22,60,40,.13); }
+.fact-panel,.daily,.empty { background:linear-gradient(135deg,#123d2b,#20553b)!important;color:#fffdf5; border:1px solid rgba(214,181,107,.6); box-shadow:0 15px 34px rgba(15,55,39,.18); }
+.fact-panel h2,.daily h2,.empty h2 { color:#f1d89c; }
+.daily .text { color:#fffdf5; }
+.menu-item a { border-top-color:rgba(183,151,82,.5); }
+.menu-dot { background:linear-gradient(145deg,#bd2636,#871526);box-shadow:0 0 0 5px rgba(214,181,107,.17); }
+.search input, input,textarea,select { border-color:rgba(183,151,82,.55)!important;box-shadow:0 3px 12px rgba(31,66,45,.04); }
+.search input:focus,input:focus,textarea:focus,select:focus { outline:3px solid rgba(214,181,107,.35)!important; }
+.q-option label { background:rgba(255,253,248,.92);transition:transform .18s,box-shadow .18s; }
+.q-option label:hover { transform:translateX(3px);box-shadow:0 5px 14px rgba(31,66,45,.08); }
+.site-footer { background:linear-gradient(135deg,#103b29,#1b5137);color:#fffdf5;border-top:2px solid #d6b56b;padding-top:36px; }
+.site-footer a,.site-footer .copy { color:#fffdf5; }
+.site-footer::before { filter:drop-shadow(0 3px 4px rgba(0,0,0,.2)); }
+.site-footer .copy::after { color:#e9c982; }
+/* A glowing string of miniature lights */
+.xs-lights { position:fixed;top:0;left:0;right:0;height:8px;z-index:11;pointer-events:none;display:flex;justify-content:space-around; }
+.xs-lights i { width:8px;height:12px;border-radius:50% 50% 45% 45%;background:#e6c36f;box-shadow:0 0 8px 3px rgba(230,195,111,.65);animation:twinkle 2.8s ease-in-out infinite alternate; }
+.xs-lights i:nth-child(3n){background:#e84855;box-shadow:0 0 9px 3px rgba(232,72,85,.45);animation-delay:.7s}.xs-lights i:nth-child(4n){background:#68bd88;box-shadow:0 0 9px 3px rgba(104,189,136,.45);animation-delay:1.2s}
+@keyframes twinkle { from{opacity:.5;transform:scale(.8)}to{opacity:1;transform:scale(1.1)} }
+.xs-snow i { background:#fff;box-shadow:0 0 8px rgba(255,255,255,.85); }
+.xs-snow i.red { background:#d6b56b;box-shadow:0 0 8px rgba(214,181,107,.6); }
+@media(max-width:560px){.site-header .wrap{min-height:66px}.site-header::after{height:27px}.xs-lights i{width:6px;height:9px}.hero::before{opacity:.6}}
+@media(prefers-reduced-motion:reduce){.xs-lights i,.animal,.btn,.q-option label{animation:none;transition:none}.xs-snow{display:none}}
+@media print{.xs-lights,.xs-snow{display:none!important}}
