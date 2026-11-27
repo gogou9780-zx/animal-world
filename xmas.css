@@ -48,3 +48,22 @@ body { background: radial-gradient(ellipse at 12% 0%,rgba(194,35,52,.08),transpa
 @media(max-width:560px){.site-header .wrap{min-height:66px}.site-header::after{height:27px}.xs-lights i{width:6px;height:9px}.hero::before{opacity:.6}}
 @media(prefers-reduced-motion:reduce){.xs-lights i,.animal,.btn,.q-option label{animation:none;transition:none}.xs-snow{display:none}}
 @media print{.xs-lights,.xs-snow{display:none!important}}
+/* FIX: prevent animal cards from clipping their text/content */
+.animal {
+  display: flex;
+  flex-direction: column;
+  height: auto !important;
+  min-height: 0;
+  overflow: visible !important;
+  padding: 0 16px 18px;
+  border-radius: 18px;
+}
+.animal figure {
+  width: calc(100% + 32px);
+  margin: 0 -16px 0 !important;
+  flex: none;
+}
+.animal h3 { margin-top: 16px !important; }
+.animal p { overflow: visible; height: auto; }
+.animal .region { margin-top: 8px; padding-top: 6px; }
+.animal-grid { align-items: stretch; }
